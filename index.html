@@ -1340,4 +1340,12 @@
   });
 
   collapseBtn.addEventListener('click', () => {
-    allDeta
+    allDetails().forEach(d => d.open = false);
+  });
+
+  printBtn.addEventListener('click', () => {
+    window.print();
+  });
+</script>
+</body>
+</html>
