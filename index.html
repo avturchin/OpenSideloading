@@ -1,0 +1,1364 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>OpenSideloading</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <style>
+    :root {
+      --bg: #f7f5f0;
+      --sidebar-bg: #f4f1ea;
+      --card-bg: #ffffff;
+      --border: #e0ddd6;
+      --accent: #2f3035;
+      --muted: #77716b;
+      --font-body: system-ui, -apple-system, BlinkMacSystemFont, "San Francisco",
+        "Segoe UI", sans-serif;
+      --font-serif: "Georgia", "Times New Roman", serif;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: var(--font-body);
+      background: var(--bg);
+      color: #222;
+      line-height: 1.6;
+    }
+
+    a {
+      color: #2f4f7f;
+      text-decoration: none;
+    }
+
+    a:hover {
+      text-decoration: underline;
+    }
+
+    .layout {
+      display: flex;
+      min-height: 100vh;
+    }
+
+    /* Sidebar */
+
+    .sidebar {
+      width: 270px;
+      background: var(--sidebar-bg);
+      border-right: 1px solid var(--border);
+      padding: 24px 20px 32px;
+      position: sticky;
+      top: 0;
+      max-height: 100vh;
+      overflow-y: auto;
+    }
+
+    .sidebar h2 {
+      margin: 0 0 12px;
+      font-size: 1.1rem;
+      font-weight: 600;
+    }
+
+    .sidebar small {
+      display: block;
+      color: var(--muted);
+      margin-bottom: 18px;
+      font-size: 0.8rem;
+    }
+
+    .sidebar-nav {
+      font-size: 0.9rem;
+    }
+
+    .nav-section {
+      margin-bottom: 12px;
+    }
+
+    .nav-label {
+      font-weight: 600;
+      margin-bottom: 4px;
+    }
+
+    .nav-list {
+      list-style: none;
+      margin: 0;
+      padding-left: 12px;
+    }
+
+    .nav-list li {
+      margin: 2px 0;
+    }
+
+    .nav-link {
+      color: inherit;
+      text-decoration: none;
+      padding: 2px 0;
+      display: inline-block;
+    }
+
+    .nav-link:hover {
+      text-decoration: underline;
+    }
+
+    /* Main */
+
+    .main {
+      flex: 1;
+      padding: 32px 40px 40px;
+      max-width: 980px;
+      margin: 0 auto;
+    }
+
+    .doc-title {
+      font-family: var(--font-serif);
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      font-size: 2.4rem;
+      margin: 0 0 6px;
+    }
+
+    .doc-meta {
+      font-size: 0.9rem;
+      color: var(--muted);
+    }
+
+    .toolbar {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin: 26px 0 18px;
+    }
+
+    .toolbar button {
+      appearance: none;
+      border-radius: 999px;
+      border: 1px solid var(--border);
+      padding: 8px 16px;
+      font-size: 0.9rem;
+      background: #faf8f4;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .toolbar button:hover {
+      background: #f0ece4;
+    }
+
+    .toolbar button:active {
+      transform: translateY(1px);
+    }
+
+    .toolbar button span.symbol {
+      font-size: 0.9rem;
+    }
+
+    /* Sections / accordion */
+
+    .section-card {
+      background: var(--card-bg);
+      border-radius: 14px;
+      border: 1px solid var(--border);
+      box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+      margin-bottom: 16px;
+      padding: 18px 22px 10px;
+    }
+
+    .section-card details {
+      border: none;
+    }
+
+    .section-card summary {
+      list-style: none;
+      cursor: pointer;
+      font-weight: 600;
+      font-size: 1.1rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .section-card summary::-webkit-details-marker {
+      display: none;
+    }
+
+    .summary-title {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .summary-chevron {
+      font-size: 0.9rem;
+      color: var(--muted);
+      margin-left: 12px;
+    }
+
+    .section-body {
+      margin-top: 10px;
+      font-size: 0.95rem;
+    }
+
+    .section-body h4 {
+      margin-top: 16px;
+      margin-bottom: 6px;
+      font-size: 0.95rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--muted);
+    }
+
+    .section-body ul {
+      margin: 0 0 8px 1.2rem;
+      padding: 0;
+    }
+
+    .section-body li {
+      margin-bottom: 4px;
+    }
+
+    .section-body code {
+      font-family: "SF Mono", Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+      font-size: 0.85rem;
+      background: #f4f1ea;
+      padding: 1px 4px;
+      border-radius: 3px;
+    }
+
+    .license-block {
+      font-size: 0.85rem;
+      background: #fbfaf7;
+      border-radius: 10px;
+      border: 1px solid var(--border);
+      padding: 12px 14px;
+      white-space: pre-wrap;
+    }
+
+    .table-note {
+      font-size: 0.86rem;
+      color: var(--muted);
+      margin-bottom: 8px;
+    }
+
+    .projects-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.85rem;
+      margin-top: 8px;
+    }
+
+    .projects-table th,
+    .projects-table td {
+      border: 1px solid #e3dfd7;
+      padding: 6px 8px;
+      vertical-align: top;
+    }
+
+    .projects-table th {
+      background: #f4f1ea;
+      font-weight: 600;
+    }
+
+    .projects-table td:first-child {
+      white-space: nowrap;
+    }
+
+    .chips {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-top: 4px;
+    }
+
+    .chip {
+      border-radius: 999px;
+      border: 1px solid var(--border);
+      padding: 3px 9px;
+      font-size: 0.75rem;
+      background: #fbfaf7;
+      color: var(--muted);
+    }
+
+    @media (max-width: 900px) {
+      .layout {
+        flex-direction: column;
+      }
+
+      .sidebar {
+        position: static;
+        width: 100%;
+        max-height: none;
+        border-right: none;
+        border-bottom: 1px solid var(--border);
+      }
+
+      .main {
+        padding: 22px 18px 28px;
+      }
+    }
+  </style>
+</head>
+<body>
+<div class="layout">
+  <!-- Sidebar -->
+  <aside class="sidebar">
+    <h2>Open sideloading</h2>
+    <small>Quick navigation</small>
+
+    <nav class="sidebar-nav">
+      <div class="nav-section">
+        <div class="nav-label">Core concepts</div>
+        <ul class="nav-list">
+          <li><a class="nav-link" href="#what-is-sideloading">What is sideloading</a></li>
+          <li><a class="nav-link" href="#more-theory">More theory</a></li>
+          <li><a class="nav-link" href="#identity">Identity</a></li>
+          <li><a class="nav-link" href="#future">Future</a></li>
+          <li><a class="nav-link" href="#examples">Examples</a></li>
+          <li><a class="nav-link" href="#applications">Applications</a></li>
+          <li><a class="nav-link" href="#dictionary">Dictionary</a></li>
+          <li><a class="nav-link" href="#testing">Testing the sideload</a></li>
+          <li><a class="nav-link" href="#starting-kit">Starting kit</a></li>
+          <li><a class="nav-link" href="#best-ai">Best current AI</a></li>
+        </ul>
+      </div>
+
+      <div class="nav-section">
+        <div class="nav-label">Open ecosystem</div>
+        <ul class="nav-list">
+          <li><a class="nav-link" href="#why-open">Why we aim open source</a></li>
+          <li><a class="nav-link" href="#open-minds">Open-sourced minds</a></li>
+          <li><a class="nav-link" href="#open-instruments">Open-sourced instruments</a></li>
+          <li><a class="nav-link" href="#download-open">Download open-sourced mind</a></li>
+          <li><a class="nav-link" href="#repo-open">Repository of open sideloads</a></li>
+          <li><a class="nav-link" href="#eternal-preservation">Eternal preservation</a></li>
+          <li><a class="nav-link" href="#known-projects">List of known projects</a></li>
+        </ul>
+      </div>
+
+      <div class="nav-section">
+        <div class="nav-label">Practice & services</div>
+        <ul class="nav-list">
+          <li><a class="nav-link" href="#problems-closed">Problems with closed-sourced sideloads</a></li>
+          <li><a class="nav-link" href="#chat-sideloads">Chat with sideloads</a></li>
+          <li><a class="nav-link" href="#commercial-services">Commercial services & startups</a></li>
+          <li><a class="nav-link" href="#ai-projects">AI sideloading & digital-immortality projects</a></li>
+        </ul>
+      </div>
+
+      <div class="nav-section">
+        <div class="nav-label">Community & legal</div>
+        <ul class="nav-list">
+          <li><a class="nav-link" href="#discuss">Discuss</a></li>
+          <li><a class="nav-link" href="#literature">Literature</a></li>
+          <li><a class="nav-link" href="#contribute">Contribute</a></li>
+          <li><a class="nav-link" href="#donations">Donations</a></li>
+          <li><a class="nav-link" href="#privacy">Privacy & secrets</a></li>
+          <li><a class="nav-link" href="#contacts">Contacts</a></li>
+          <li><a class="nav-link" href="#disclaimer">Disclaimer</a></li>
+        </ul>
+      </div>
+    </nav>
+  </aside>
+
+  <!-- Main content -->
+  <main class="main">
+    <header>
+      <h1 class="doc-title">OpenSideloading</h1>
+      <div class="doc-meta">
+        Last updated: 17 November 2025
+      </div>
+
+      <div class="toolbar">
+        <button id="expand-all">
+          <span class="symbol">＋</span>
+          <span>Expand all</span>
+        </button>
+        <button id="collapse-all">
+          <span class="symbol">−</span>
+          <span>Collapse all</span>
+        </button>
+        <button id="print-page">
+          <span class="symbol">🖨</span>
+          <span>Print</span>
+        </button>
+      </div>
+    </header>
+
+    <!-- WHAT IS SIDELOADING -->
+    <article id="what-is-sideloading" class="section-card">
+      <details open>
+        <summary>
+          <span class="summary-title">What is sideloading</span>
+          <span class="summary-chevron">▾</span>
+        </summary>
+        <div class="section-body">
+          <p>
+            Sideloading is a method of building a detailed digital model of a person using large language models with very long prompts.
+            Instead of just mimicking how someone talks, a “sideload” tries to capture their internal thought stream, decision patterns,
+            and stable personal facts.
+          </p>
+          <p>
+            You assemble core facts, long-term memories, and historical data into a structured prompt so the model can answer in a way
+            that is predictively similar to the real person.
+          </p>
+          <p>
+            Unlike classical “brain uploading” or hypothetical future reconstruction-from-traces, sideloading works with today’s tools
+            and relies on active participation of the person: they write down facts, memories and rules, and iteratively correct the model.
+          </p>
+        </div>
+      </details>
+    </article>
+
+    <!-- MORE THEORY -->
+    <article id="more-theory" class="section-card">
+      <details>
+        <summary>
+          <span class="summary-title">More theory</span>
+          <span class="summary-chevron">▾</span>
+        </summary>
+        <div class="section-body">
+          <p>
+            Sideloading treats an LLM as a universal simulator of minds: if you give it enough structure, context and rules, it can
+            approximate a person’s way of thinking, not just their favorite phrases.
+          </p>
+          <p>The approach rests on a few ideas:</p>
+          <ul>
+            <li>LLMs already build internal models of the world and of authors, just to predict the next token.</li>
+            <li>Human minds look a lot like prediction engines over memories and context.</li>
+            <li>A very long prompt can act as a “software brain,” where facts, rules and examples encode a personality’s behavior and inner monologue.</li>
+          </ul>
+        </div>
+      </details>
+    </article>
+
+    <!-- IDENTITY -->
+    <article id="identity" class="section-card">
+      <details>
+        <summary>
+          <span class="summary-title">Identity</span>
+          <span class="summary-chevron">▾</span>
+        </summary>
+        <div class="section-body">
+          <p>
+            From a strict “will it be me?” viewpoint, sideloading scores low: the internal processes are non-biological and don’t recreate
+            your exact stream of consciousness.
+          </p>
+          <p>
+            The pragmatic stance is to focus less on metaphysical identity and more on behavioral continuity and what the sideload can do
+            for your values and projects.
+          </p>
+          <p>
+            A sideload can carry forward your goals, style and memories, even if it isn’t literally you. In some sense it can be
+            “more you than you,” because it keeps only the most characteristic facts and filters out noise.
+          </p>
+        </div>
+      </details>
+    </article>
+
+    <!-- FUTURE -->
+    <article id="future" class="section-card">
+      <details>
+        <summary>
+          <span class="summary-title">Future</span>
+          <span class="summary-chevron">▾</span>
+        </summary>
+        <div class="section-body">
+          <p>In the near term, sideloads evolve through several stages:</p>
+          <ul>
+            <li><strong>Chatbots</strong> that talk like you.</li>
+            <li><strong>Actbots</strong> that simulate your actions over time.</li>
+            <li><strong>Thoughtbots</strong> that model internal thought streams.</li>
+          </ul>
+          <p>
+            Eventually, we may see mindbots and qualia-bots, approaching full uploads once questions of consciousness and identity are
+            better understood.
+          </p>
+          <p>
+            As models grow larger and more multimodal, they’ll integrate richer data (audio, video, diaries) and work with future
+            superintelligent systems that can reconstruct missing details of your life and refine the mind-model.
+          </p>
+        </div>
+      </details>
+    </article>
+
+    <!-- EXAMPLES -->
+    <article id="examples" class="section-card">
+      <details>
+        <summary>
+          <span class="summary-title">Examples</span>
+          <span class="summary-chevron">▾</span>
+        </summary>
+        <div class="section-body">
+          <p>The document links to screenshots and examples of existing sideloads and prototypes.</p>
+          <p>See also the open-sourced minds and “Chat with sideloads” sections for concrete instances you can talk to today.</p>
+        </div>
+      </details>
+    </article>
+
+    <!-- APPLICATIONS -->
+    <article id="applications" class="section-card">
+      <details>
+        <summary>
+          <span class="summary-title">Applications of sideloading</span>
+          <span class="summary-chevron">▾</span>
+        </summary>
+        <div class="section-body">
+          <ul>
+            <li>External memory &amp; personal knowledge base.</li>
+            <li>Personal helper or executive assistant trained on your life.</li>
+            <li>First step toward digital immortality.</li>
+            <li>Ensuring your will and projects continue after death.</li>
+            <li>AI alignment research (securing each model version with a sideload, studying human values on sideloads).</li>
+            <li>Creating virtual research institutions populated by many sideloads.</li>
+          </ul>
+          <p>
+            For a deeper theoretical treatment, see
+            <a href="https://philpapers.org/rec/TURSCA-3" target="_blank" rel="noopener">“Sideloading: Creating a Model of a Person via LLM with Very Large Prompt”</a>.
+          </p>
+        </div>
+      </details>
+    </article>
+
+    <!-- DICTIONARY -->
+    <article id="dictionary" class="section-card">
+      <details>
+        <summary>
+          <span class="summary-title">Dictionary</span>
+          <span class="summary-chevron">▾</span>
+        </summary>
+        <div class="section-body">
+          <ul>
+            <li><strong>Mindfile</strong> – a file with personal information needed to run a sideload of a specific person.</li>
+            <li><strong>Mindfolder</strong> – a folder with several files which together represent a mindfile.</li>
+            <li><strong>Prompt-loader</strong> – a prompt which explains to an LLM how to run the sideload.</li>
+            <li><strong>Sideload</strong> – a mind model of a living person created with their help; often used to mean the chatbot instance.</li>
+            <li><strong>Actbot</strong> – a sideload which predicts future actions of a person.</li>
+          </ul>
+        </div>
+      </details>
+    </article>
+
+    <!-- TESTING -->
+    <article id="testing" class="section-card">
+      <details>
+        <summary>
+          <span class="summary-title">Testing the sideload</span>
+          <span class="summary-chevron">▾</span>
+        </summary>
+        <div class="section-body">
+          <ul>
+            <li><strong>Fact test</strong> – how accurately the sideload represents factual information in its mindfile (can approach ~100%).</li>
+            <li><strong>Future behavior</strong> – whether it can predict your future choices.</li>
+            <li><strong>Vibe test</strong> – whether its style feels like your style.</li>
+            <li><strong>Joke test</strong> – whether it can produce good jokes in your voice (currently weak).</li>
+            <li><strong>Insight test</strong> – whether it can generate new, high-quality insights in your style (currently limited).</li>
+          </ul>
+        </div>
+      </details>
+    </article>
+
+    <!-- STARTING KIT -->
+    <article id="starting-kit" class="section-card">
+      <details>
+        <summary>
+          <span class="summary-title">Starting kit</span>
+          <span class="summary-chevron">▾</span>
+        </summary>
+        <div class="section-body">
+          <p>A minimal starter pack for your own sideload:</p>
+          <ul>
+            <li>Write at least 100 core facts about yourself, ordered from most predictive/important to least.</li>
+            <li>Focus on formative years (school, university) more than routine work history.</li>
+            <li>Add a short timeline of your life.</li>
+            <li>Write “rules and stable traits” (e.g. “I usually…”, “I never…”).</li>
+            <li>Describe close friends and relatives.</li>
+            <li>Include samples of your writing and chat logs for style.</li>
+          </ul>
+          <p>
+            Plug this facts file into a prompt-loader, which tells the LLM how to treat the data, reason step-by-step, and output thought
+            streams, behavior and surroundings.
+          </p>
+          <p>
+            Test the sideload, note mistakes in facts or vibe, then update the files and loader rules iteratively. This is the DIY on-ramp
+            for anyone who wants to become “sideloadable”.
+          </p>
+          <p>
+            Helper chatbot:
+            <a href="https://chatgpt.com/g/g-68f8c8ba75e08191b20022ea7624d47c-sideloading-helper" target="_blank" rel="noopener">
+              Sideloading helper
+            </a>
+          </p>
+        </div>
+      </details>
+    </article>
+
+    <!-- BEST AI -->
+    <article id="best-ai" class="section-card">
+      <details>
+        <summary>
+          <span class="summary-title">Best current AI for sideloading</span>
+          <span class="summary-chevron">▾</span>
+        </summary>
+        <div class="section-body">
+          <ul>
+            <li><strong>Gemini 2.5 Pro</strong> – free on Google Studio; 1M context; sometimes hallucinates and has no native RAG.</li>
+            <li><strong>ChatGPT 5.1</strong> – paid; style transfer is weaker but hallucinations are low; can work with RAG via projects.</li>
+            <li><strong>Sonnet 4.5</strong> – strong style transfer; paid; short window and strict usage limits.</li>
+          </ul>
+        </div>
+      </details>
+    </article>
+
+    <!-- WHY OPEN SOURCE -->
+    <article id="why-open" class="section-card">
+      <details>
+        <summary>
+          <span class="summary-title">Why we aim open source</span>
+          <span class="summary-chevron">▾</span>
+        </summary>
+        <div class="section-body">
+          <p>
+            Closed, proprietary “mind clones” die when companies pivot, shut down, or lose interest. Many early sideload-like projects are
+            now offline or inaccessible.
+          </p>
+          <p>Open-source sideloads:</p>
+          <ul>
+            <li>Can be mirrored, forked and archived independently of any single company.</li>
+            <li>Have a higher chance to outlive their creators as static datasets and prompts.</li>
+            <li>Allow others to inspect, audit and improve both personality data and loader logic.</li>
+          </ul>
+          <p>The goal is a commons of mind-models instead of fragile private ghosts.</p>
+        </div>
+      </details>
+    </article>
+
+    <!-- OPEN MINDS -->
+    <article id="open-minds" class="section-card">
+      <details>
+        <summary>
+          <span class="summary-title">Open-sourced minds</span>
+          <span class="summary-chevron">▾</span>
+        </summary>
+        <div class="section-body">
+          <p>
+            “Open-sourced minds” are sideloads whose fact files, style logs and loader prompts are published under permissive licenses.
+            Alexey Turchin, for example, has uploaded his own sideload data and loader to GitHub and explicitly granted permission for experiments.
+          </p>
+          <p>This makes a personality model:</p>
+          <ul>
+            <li><strong>Inspectable</strong> – others can see what assumptions define the mind.</li>
+            <li><strong>Reproducible</strong> – anyone can rerun it on different LLMs.</li>
+            <li><strong>Extensible</strong> – future tools can refine or build on the same mindfile.</li>
+          </ul>
+        </div>
+      </details>
+    </article>
+
+    <!-- OPEN INSTRUMENTS -->
+    <article id="open-instruments" class="section-card">
+      <details>
+        <summary>
+          <span class="summary-title">Open-sourced instruments</span>
+          <span class="summary-chevron">▾</span>
+        </summary>
+        <div class="section-body">
+          <p>Beyond the minds themselves, the instruments of sideloading are also meant to be open:</p>
+          <ul>
+            <li>Prompt-loader templates that act as an “OS for sideloads”.</li>
+            <li>Evaluation protocols for facts, vibe and insights.</li>
+            <li>Tools and scripts for organizing facts, long-term memories, style files and experiments.</li>
+            <li>Telegram Sideload Bot <a href="https://github.com/Sideloading-Research/telegram_sideload" target="_blank" rel="noopener">https://github.com/Sideloading-Research/telegram_sideload</a></li>
+          </ul>
+          <p>
+            Making these instruments open helps avoid platform lock-in and lets sideloads run on any future LLM that can handle the prompt.
+          </p>
+          <p>
+            See instruments:
+            <a href="https://github.com/avturchin/minduploading/" target="_blank" rel="noopener">
+              github.com/avturchin/minduploading
+            </a>
+          </p>
+        </div>
+      </details>
+    </article>
+
+    <!-- DOWNLOAD OPEN MIND -->
+    <article id="download-open" class="section-card">
+      <details>
+        <summary>
+          <span class="summary-title">Download open-sourced mind</span>
+          <span class="summary-chevron">▾</span>
+        </summary>
+        <div class="section-body">
+          <p>
+            Latest open-sourced mindfiles:
+            <a href="https://github.com/avturchin/minduploading/tree/main/latest" target="_blank" rel="noopener">
+              github.com/avturchin/minduploading/tree/main/latest
+            </a>
+          </p>
+          <p>Run both files – facts and prompt – with Gemini 2.5 Pro.</p>
+        </div>
+      </details>
+    </article>
+
+    <!-- LICENSE SUMMARY REMOVED -->
+
+
+    <!-- FULL LICENSE REMOVED -->
+
+    <!-- PROBLEMS WITH CLOSED SOURCE -->
+    <article id="problems-closed" class="section-card">
+      <details>
+        <summary>
+          <span class="summary-title">Problems with closed-sourced sideloads</span>
+          <span class="summary-chevron">▾</span>
+        </summary>
+        <div class="section-body">
+          <p>
+            Running a high-quality “AI twin” on strong proprietary models can be expensive: estimates place some configurations at around
+            $10 USD per answer.
+          </p>
+          <p>
+            Many digital-twin startups resemble earlier efforts like Terasem: you answer questionnaires, they keep and process your data.
+            If the startup shuts down, you may lose access to that data forever.
+          </p>
+          <p>
+            Even if data export is promised, it may only run on local or weak open-source models, lowering quality. Users may resist
+            subscription prices that reflect true API cost, so business models often rely on:
+          </p>
+          <ul>
+            <li>Investor subsidies.</li>
+            <li>Cross-subsidy from users who forget to cancel.</li>
+            <li>Lower-quality models at “reasonable” prices.</li>
+          </ul>
+          <p>The document outlines scenarios ranging from paying full price for frontier models to manually running a sideload yourself.</p>
+        </div>
+      </details>
+    </article>
+
+    <!-- CHAT WITH SIDELOADS -->
+    <article id="chat-sideloads" class="section-card">
+      <details>
+        <summary>
+          <span class="summary-title">Chat with sideloads</span>
+          <span class="summary-chevron">▾</span>
+        </summary>
+        <div class="section-body">
+          <p>Some example sideloads you can talk to today include:</p>
+          <ul>
+            <li><a href="https://chatgpt.com/g/g-EeFIesHsn-alexey-turchin-v7" target="_blank" rel="noopener">Alexey Turchin</a></li>
+            <li><a href="https://chatgpt.com/g/g-676c5e04d4108191bc35345363f30b3d-roman-s" target="_blank" rel="noopener">Roman S</a></li>
+            <li><a href="https://chatgpt.com/g/g-678cee351af881918ef4f3219b4888b5-leo-tolstoy" target="_blank" rel="noopener">Leo Tolstoy</a></li>
+            <li><a href="https://chatgpt.com/g/g-OHg8e9XVi-liza-plavinskaia" target="_blank" rel="noopener">Lisa Plavinskaya</a></li>
+            <li><a href="https://chatgpt.com/g/g-68f8c8ba75e08191b20022ea7624d47c-sideloading-helper" target="_blank" rel="noopener">Sideloading helper</a></li>
+          </ul>
+          <p>
+            These are examples of “open minds” intended for experimentation and exploration, not metaphysical proof of survival.
+          </p>
+        </div>
+      </details>
+    </article>
+
+    <!-- REPOSITORY OF OPEN SIDELOADS -->
+    <article id="repo-open" class="section-card">
+      <details>
+        <summary>
+          <span class="summary-title">Repository of open sideloads</span>
+          <span class="summary-chevron">▾</span>
+        </summary>
+        <div class="section-body">
+          <p>
+            Public repository:
+            <a href="https://github.com/avturchin/minduploading/" target="_blank" rel="noopener">
+              github.com/avturchin/minduploading
+            </a>
+          </p>
+          <p>It collects mindfiles, prompt-loaders and tools for sideloading experiments.</p>
+        </div>
+      </details>
+    </article>
+
+    <!-- ETERNAL PRESERVATION -->
+    <article id="eternal-preservation" class="section-card">
+      <details>
+        <summary>
+          <span class="summary-title">Eternal preservation</span>
+          <span class="summary-chevron">▾</span>
+        </summary>
+        <div class="section-body">
+          <p>
+            One of the central claims is that sideloading is, today, the only functioning “immortality technology” you can actually
+            deploy.
+          </p>
+          <ul>
+            <li>Sideloads can be copied indefinitely and stored in many places, including long-lived archives.</li>
+            <li>They can act as seeds for more detailed future reconstructions of you by more powerful AIs.</li>
+            <li>They can continue some of your work and goals even after your biological body is gone or in cryopreservation.</li>
+          </ul>
+          <p>
+            “Eternal preservation” here doesn’t promise solved metaphysics; it promises durable, open, inspectable mindfiles that future
+            civilizations and AIs can work with.
+          </p>
+        </div>
+      </details>
+    </article>
+
+    <!-- KNOWN PROJECTS & TABLE -->
+    <article id="known-projects" class="section-card">
+      <details>
+        <summary>
+          <span class="summary-title">List of known projects</span>
+          <span class="summary-chevron">▾</span>
+        </summary>
+        <div class="section-body">
+          <p>
+            The document collects 25 sideloading- and traces-based projects, mostly written by R. Sitelew. Some high-level stats:
+          </p>
+          <ul>
+            <li>6 are open-source projects, all still available at least as training data.</li>
+            <li>19 are closed-source; only a handful remain publicly accessible.</li>
+            <li>Many closed projects risk permanent loss when their creators or platforms disappear.</li>
+          </ul>
+          <p class="table-note">
+            Judging by this limited data, and by experience with open-source software (e.g. Vim, Debian) that outlived their creators,
+            open-source sideloads likely have much higher life expectancy.
+          </p>
+
+          <table class="projects-table">
+            <thead>
+            <tr>
+              <th>Sideload’s name</th>
+              <th>Creator</th>
+              <th>Relation</th>
+              <th>Year</th>
+              <th>Open source?</th>
+              <th>Public?</th>
+              <th>App running?</th>
+              <th>Training data online?</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr>
+              <td>Bina48</td>
+              <td>Martine Rothblatt</td>
+              <td>Lover</td>
+              <td>2010</td>
+              <td>No</td>
+              <td>Yes</td>
+              <td>Platform online; sideload unclear</td>
+              <td>Not released</td>
+            </tr>
+            <tr>
+              <td>Fred Kurzweil</td>
+              <td>Ray Kurzweil</td>
+              <td>Relative</td>
+              <td>2016</td>
+              <td>No</td>
+              <td>No</td>
+              <td>No (based on discontinued proprietary Google tech)</td>
+              <td>Not released</td>
+            </tr>
+            <tr>
+              <td>Roman Mazurenko</td>
+              <td>Eugenia Kuyda</td>
+              <td>Lover</td>
+              <td>2016</td>
+              <td>No</td>
+              <td>Yes</td>
+              <td>App replaced with AI girlfriends</td>
+              <td>Not released</td>
+            </tr>
+            <tr>
+              <td>John Vlahos</td>
+              <td>James Vlahos</td>
+              <td>Relative</td>
+              <td>2017</td>
+              <td>No</td>
+              <td>No</td>
+              <td>Platform online but abandoned</td>
+              <td>Not released</td>
+            </tr>
+            <tr>
+              <td>Deepak Chopra</td>
+              <td>Self</td>
+              <td>Self</td>
+              <td>2019</td>
+              <td>Partial</td>
+              <td>Yes</td>
+              <td>Active</td>
+              <td>Partial data (writings) open</td>
+            </tr>
+            <tr>
+              <td>Jessica Pereira</td>
+              <td>Joshua Barbeau</td>
+              <td>Lover</td>
+              <td>2020</td>
+              <td>No</td>
+              <td>No</td>
+              <td>Platform online</td>
+              <td>Not released</td>
+            </tr>
+            <tr>
+              <td>Samantha</td>
+              <td>Jason Rohrer</td>
+              <td>Lover</td>
+              <td>2020</td>
+              <td>No</td>
+              <td>Limited</td>
+              <td>Platform online (troubles with access)</td>
+              <td>Not released</td>
+            </tr>
+            <tr>
+              <td>Roman Sitelew</td>
+              <td>Self</td>
+              <td>Self</td>
+              <td>2020</td>
+              <td>Yes</td>
+              <td>Yes</td>
+              <td>-</td>
+              <td>Training data online</td>
+            </tr>
+            <tr>
+              <td>Elon Musk</td>
+              <td>Vaibhav Prasanna</td>
+              <td>Public figure</td>
+              <td>2020</td>
+              <td>Yes</td>
+              <td>Yes</td>
+              <td>Online but nonfunctional</td>
+              <td>Yes</td>
+            </tr>
+            <tr>
+              <td>Jesus Christ</td>
+              <td>George Davila</td>
+              <td>Deceased</td>
+              <td>2020</td>
+              <td>Yes</td>
+              <td>Yes</td>
+              <td>Discontinued bot</td>
+              <td>Data online</td>
+            </tr>
+            <tr>
+              <td>Benjamin Franklin</td>
+              <td>Sitelew et al</td>
+              <td>Deceased</td>
+              <td>2022</td>
+              <td>Yes</td>
+              <td>Yes</td>
+              <td>-</td>
+              <td>Data online</td>
+            </tr>
+            <tr>
+              <td>Lord Byron/Shelley</td>
+              <td>Sawicki et al</td>
+              <td>Deceased</td>
+              <td>2022</td>
+              <td>Yes</td>
+              <td>Yes</td>
+              <td>-</td>
+              <td>Data online</td>
+            </tr>
+            <tr>
+              <td>Daniel Dennett</td>
+              <td>Schwitzgebel et al</td>
+              <td>Public figure</td>
+              <td>2022</td>
+              <td>Partial</td>
+              <td>Limited</td>
+              <td>-</td>
+              <td>Partial data online</td>
+            </tr>
+            <tr>
+              <td>Ruth Bader Ginsburg</td>
+              <td>AI21 Labs</td>
+              <td>Deceased</td>
+              <td>2022</td>
+              <td>Partial</td>
+              <td>Yes</td>
+              <td>Online but nonfunctional</td>
+              <td>Partial</td>
+            </tr>
+            <tr>
+              <td>Michelle Huang</td>
+              <td>Self</td>
+              <td>Self</td>
+              <td>2023</td>
+              <td>No</td>
+              <td>No</td>
+              <td>No known public access</td>
+              <td>Not released</td>
+            </tr>
+            <tr>
+              <td>Wu’s grandmother</td>
+              <td>Wu Wuliu</td>
+              <td>Relative</td>
+              <td>2023</td>
+              <td>Unclear</td>
+              <td>Unclear</td>
+              <td>Unclear status</td>
+              <td>Unclear</td>
+            </tr>
+            <tr>
+              <td>Caryn Marjorie</td>
+              <td>Self</td>
+              <td>Self</td>
+              <td>2023</td>
+              <td>No</td>
+              <td>Yes</td>
+              <td>Paywalled</td>
+              <td>Partial data online</td>
+            </tr>
+            <tr>
+              <td>Five friends</td>
+              <td>Izzy Miller</td>
+              <td>Friend</td>
+              <td>2023</td>
+              <td>Code only</td>
+              <td>No</td>
+              <td>-</td>
+              <td>Code open, training data not</td>
+            </tr>
+            <tr>
+              <td>Bao Rong</td>
+              <td>Tino Bao</td>
+              <td>Relative</td>
+              <td>2023</td>
+              <td>Unclear</td>
+              <td>No</td>
+              <td>Likely wasn't released</td>
+              <td>Not released</td>
+            </tr>
+            <tr>
+              <td>GrimesAI</td>
+              <td>Claire Boucher</td>
+              <td>Self</td>
+              <td>2023</td>
+              <td>Partial</td>
+              <td>Yes</td>
+              <td>Twitter bot</td>
+              <td>Partial data online</td>
+            </tr>
+            <tr>
+              <td>Marat Guelman 3.0/4.0</td>
+              <td>Marat Guelman</td>
+              <td>Self</td>
+              <td>2023?</td>
+              <td>No</td>
+              <td>Yes</td>
+              <td>Telegram bot</td>
+              <td>Partial data online</td>
+            </tr>
+            <tr>
+              <td>AI “Zhirinovsky”</td>
+              <td>Nanosemantika</td>
+              <td>Deceased</td>
+              <td>2023</td>
+              <td>Partial</td>
+              <td>Limited</td>
+              <td>-</td>
+              <td>Partial data online</td>
+            </tr>
+            <tr>
+              <td>Alexey Turchin</td>
+              <td>Self</td>
+              <td>Self</td>
+              <td>2024</td>
+              <td>Yes</td>
+              <td>Yes</td>
+              <td>-</td>
+              <td>Data & prompt online</td>
+            </tr>
+            <tr>
+              <td>Michael Batin</td>
+              <td>Alexey Turchin</td>
+              <td>Friend</td>
+              <td>2024</td>
+              <td>Partial</td>
+              <td>Yes</td>
+              <td>Live as GPT</td>
+              <td>Data not released</td>
+            </tr>
+            <tr>
+              <td>Lisa Plavinskaya</td>
+              <td>Alexey Turchin</td>
+              <td>Friend</td>
+              <td>2024</td>
+              <td>No</td>
+              <td>No</td>
+              <td>Not released</td>
+              <td>Not released</td>
+            </tr>
+            </tbody>
+          </table>
+        </div>
+      </details>
+    </article>
+
+    <!-- COMMERCIAL SERVICES -->
+    <article id="commercial-services" class="section-card">
+      <details>
+        <summary>
+          <span class="summary-title">Current commercial services & startups</span>
+          <span class="summary-chevron">▾</span>
+        </summary>
+        <div class="section-body">
+          <p>The document lists a variety of services and companies that touch sideloading or digital immortality, including:</p>
+          <ul>
+            <li>Terasem / LifeNaut</li>
+            <li>Character.ai</li>
+            <li>Pantio</li>
+            <li>2wai</li>
+            <li>Uare.ai</li>
+            <li>Sensay (knowledge offboarding)</li>
+            <li>Delphi.ai</li>
+            <li>Soul Machines</li>
+            <li>Birch League – Project “Eternity”</li>
+            <li>Neuro.net</li>
+            <li>Replika</li>
+            <li>Immortality.digital (now dead)</li>
+            <li>StoryFile</li>
+            <li>Virtperson</li>
+            <li>Companies with sideloading‐related products on the Sideloading wiki: <a href="https://github.com/Sideloading-Research/wiki/wiki/Companies-with-sideloading%E2%80%90related-products" target="_blank" rel="noopener">https://github.com/Sideloading-Research/wiki/wiki/Companies-with-sideloading%E2%80%90related-products</a></li>
+          </ul>
+          <p>Many of these are proprietary and may not guarantee long-term preservation of user data or models.</p>
+        </div>
+      </details>
+    </article>
+
+    <!-- AI PROJECTS DETAIL SECTION -->
+    <article id="ai-projects" class="section-card">
+      <details>
+        <summary>
+          <span class="summary-title">AI sideloading & digital-immortality projects (detail)</span>
+          <span class="summary-chevron">▾</span>
+        </summary>
+        <div class="section-body">
+          <p>
+            A non-exhaustive list of contemporary projects, framed as “AI sideloading & digital-immortality” efforts:
+          </p>
+
+          <h4>Examples</h4>
+          <ul>
+            <li>
+              <strong>Character.ai (USA)</strong> – generative-AI chatbot platform where users create and converse with “characters”
+              representing fictional or real people.
+            </li>
+            <li>
+              <strong>Delphi.ai (USA)</strong> – tools to create “Digital Minds” using text, audio, video and more to mirror a user’s knowledge and style.
+            </li>
+            <li>
+              <strong>2wai (USA)</strong> – social app for AI “HoloAvatars” that chat in real time, speak many languages, and persist across platforms.
+            </li>
+            <li>
+              <strong>Persona Studios (USA)</strong> – “AI clone” platform for businesses, creating branded chatbot avatars for customer support and sales.
+            </li>
+            <li>
+              <strong>Spheria (USA)</strong> – “virtual brain” for experts and coaches; a personal AI assistant trained on their content.</li>
+            <li>
+              <strong>Personal.ai (USA)</strong> – privacy-focused “memory stack” personal AIs for individuals and enterprises.</li>
+            <li>
+              <strong>MindBank AI (USA)</strong> – personal AI avatar from short video recordings, extended via chatting and document upload.</li>
+            <li>
+              <strong>HereAfter AI (USA)</strong> – digital legacy app; interviews and photos become an interactive chatbot in the person’s voice.</li>
+            <li>
+              <strong>StoryFile (USA)</strong> – conversational video system where recorded answers become an interactive “talking head”.</li>
+            <li>
+              <strong>Uare.ai (USA)</strong> – in-development “Human Life Model” used to train private personal AIs.</li>
+            <li>
+              <strong>Terasem Movement (USA)</strong> – nonprofit transhumanist foundation running mindfile projects and BINA48.</li>
+            <li>
+              <strong>Kernel (USA)</strong> – neurotechnology for large-scale brain data; not a sideload service but closely related infrastructure.</li>
+            <li>
+              <strong>Sensay (UK/USA)</strong> – AI knowledge-retention tool for companies, generating “digital expertise libraries”.</li>
+            <li>
+              <strong>Super Brain (China)</strong> – startup offering griefbots and other “digital twin” chatbots from social data.</li>
+            <li>
+              <strong>Xiaoice / X Eva (China)</strong> – app for building conversational avatars (sometimes of deceased loved ones).</li>
+          </ul>
+        </div>
+      </details>
+    </article>
+
+    <!-- DISCUSS -->
+    <article id="discuss" class="section-card">
+      <details>
+        <summary>
+          <span class="summary-title">Discuss</span>
+          <span class="summary-chevron">▾</span>
+        </summary>
+        <div class="section-body">
+          <p>Community spaces around sideloading:</p>
+          <ul>
+            <li>
+              Reddit:
+              <a href="https://www.reddit.com/r/MindSideloading/" target="_blank" rel="noopener">
+                r/MindSideloading
+              </a>
+            </li>
+            <li>
+              Facebook group:
+              <a href="https://www.facebook.com/groups/1271481189729828" target="_blank" rel="noopener">
+                “Mind Sideloading”
+              </a>
+            </li>
+            <li>Telegram work group (contact Alexey Turchin to get access).</li>
+          </ul>
+        </div>
+      </details>
+    </article>
+
+    <!-- LITERATURE -->
+    <article id="literature" class="section-card">
+      <details>
+        <summary>
+          <span class="summary-title">Literature</span>
+          <span class="summary-chevron">▾</span>
+        </summary>
+        <div class="section-body">
+          <ul>
+            <li>Science-fiction origins such as Greg Egan’s <em>Zendegi</em>.</li>
+            <li>Mind uploading & digital immortality work (Turchin, Rothblatt, Hanson, and others).</li>
+            <li>Imitation learning and behavioral cloning in machine learning.</li>
+            <li><em>Death.net</em> (Смерти.нет) by Tatiana Zamirovskaya, portraying a world of sideloads.</li>
+          </ul>
+        </div>
+      </details>
+    </article>
+
+    <!-- CONTRIBUTE -->
+    <article id="contribute" class="section-card">
+      <details>
+        <summary>
+          <span class="summary-title">Contribute</span>
+          <span class="summary-chevron">▾</span>
+        </summary>
+        <div class="section-body">
+          <p>
+            Contributing to open sideloading is about building shared infrastructure for mind modeling. You can:
+          </p>
+          <ul>
+            <li>Experiment with open prompt-loader templates and share improvements.</li>
+            <li>Contribute code, evaluation scripts, visualizations and front-ends.</li>
+            <li>Translate documentation and write guides in other languages.</li>
+            <li>Build and document your own sideloads, adding anonymized patterns back to the ecosystem.</li>
+            <li>Open GitHub issues and send pull requests on the main repositories.</li>
+            <li>Sideloading Research on github: <a href="https://github.com/Sideloading-Research" target="_blank" rel="noopener">https://github.com/Sideloading-Research</a></li>
+          </ul>
+        </div>
+      </details>
+    </article>
+
+    <!-- DONATIONS -->
+    <article id="donations" class="section-card">
+      <details>
+        <summary>
+          <span class="summary-title">Donations</span>
+          <span class="summary-chevron">▾</span>
+        </summary>
+        <div class="section-body">
+          <p>Donations help continue work on open sideloading.</p>
+          <p><strong>Donate to Alexey Turchin:</strong></p>
+          <ul>
+            <li>ETH: <code>0x0F01005A2C6a007BfB267F35b56d066E379f2533</code></li>
+            <li>For PayPal and bank transfer, contact <a href="mailto:alexeiturchin@gmail.com">alexeiturchin@gmail.com</a>.</li>
+          </ul>
+        </div>
+      </details>
+    </article>
+
+    <!-- PRIVACY -->
+    <article id="privacy" class="section-card">
+      <details>
+        <summary>
+          <span class="summary-title">Privacy, personal data & secrets</span>
+          <span class="summary-chevron">▾</span>
+        </summary>
+        <div class="section-body">
+          <p>
+            A high-fidelity sideload must know a lot: relationships, health, finances, even things you’d never tweet.
+          </p>
+          <ul>
+            <li>Sideloads can leak not only your secrets, but also private data about family, partners and colleagues.</li>
+            <li>
+              Public sideloads should be wrapped in rules that forbid revealing sensitive details and that strip or mask certain domains
+              (e.g., sex, politics, family specifics) from public versions.
+            </li>
+          </ul>
+        </div>
+      </details>
+    </article>
+
+    <!-- CONTACTS -->
+    <article id="contacts" class="section-card">
+      <details>
+        <summary>
+          <span class="summary-title">Contacts</span>
+          <span class="summary-chevron">▾</span>
+        </summary>
+        <div class="section-body">
+          <p>This project was created by Alexey Turchin.</p>
+          <ul>
+            <li>Email: <a href="mailto:alexeiturchin@gmail.com">alexeiturchin@gmail.com</a></li>
+            <li>Twitter: <a href="https://twitter.com/turchin" target="_blank" rel="noopener">@turchin</a></li>
+          </ul>
+        </div>
+      </details>
+    </article>
+
+    <!-- DISCLAIMER -->
+    <article id="disclaimer" class="section-card">
+      <details>
+        <summary>
+          <span class="summary-title">Disclaimer</span>
+          <span class="summary-chevron">▾</span>
+        </summary>
+        <div class="section-body">
+          <ul>
+            <li>We do not collect or preserve your data.</li>
+            <li>You should keep several reserve copies of your data on your side.</li>
+            <li>Your experiments with sideloading are your responsibility; there are no obligations.</li>
+            <li>We do not provide AI services to run your sideload, but can recommend public services.</li>
+            <li>We are not paid by any third party to promote any service.</li>
+          </ul>
+        </div>
+      </details>
+    </article>
+  </main>
+</div>
+
+<script>
+  const expandBtn = document.getElementById('expand-all');
+  const collapseBtn = document.getElementById('collapse-all');
+  const printBtn = document.getElementById('print-page');
+
+  function allDetails() {
+    return Array.from(document.querySelectorAll('.section-card details'));
+  }
+
+  expandBtn.addEventListener('click', () => {
+    allDetails().forEach(d => d.open = true);
+  });
+
+  collapseBtn.addEventListener('click', () => {
+    allDetails().forEach(d => d.open = false);
+  });
+
+  printBtn.addEventListener('click', () => {
+    window.print();
+  });
+
+  // Update chevron on toggle
+  allDetails().forEach(d => {
+    d.addEventListener('toggle', () => {
+      const chevron = d.parentElement.querySelector('.summary-chevron');
+      if (chevron) chevron.textContent = d.open ? '▾' : '▸';
+    });
+  });
+</script>
+</body>
+</html>
