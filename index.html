@@ -126,38 +126,6 @@
       color: var(--muted);
     }
 
-    .toolbar {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 10px;
-      margin: 26px 0 18px;
-    }
-
-    .toolbar button {
-      appearance: none;
-      border-radius: 999px;
-      border: 1px solid var(--border);
-      padding: 8px 16px;
-      font-size: 0.9rem;
-      background: #faf8f4;
-      cursor: pointer;
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-    }
-
-    .toolbar button:hover {
-      background: #f0ece4;
-    }
-
-    .toolbar button:active {
-      transform: translateY(1px);
-    }
-
-    .toolbar button span.symbol {
-      font-size: 0.9rem;
-    }
-
     /* Sections / accordion */
 
     .section-card {
@@ -372,21 +340,6 @@
       <div class="doc-meta">
         Last updated: 26 November 2025
       </div>
-
-      <div class="toolbar">
-        <button id="expand-all">
-          <span class="symbol">＋</span>
-          <span>Expand all</span>
-        </button>
-        <button id="collapse-all">
-          <span class="symbol">−</span>
-          <span>Collapse all</span>
-        </button>
-        <button id="print-page">
-          <span class="symbol">🖨</span>
-          <span>Print</span>
-        </button>
-      </div>
     </header>
 
     <!-- WHAT IS SIDELOADING -->
@@ -416,7 +369,7 @@
 
     <!-- MORE THEORY -->
     <article id="more-theory" class="section-card">
-      <details>
+      <details open>
         <summary>
           <span class="summary-title">More theory</span>
           <span class="summary-chevron">▾</span>
@@ -438,7 +391,7 @@
 
     <!-- IDENTITY -->
     <article id="identity" class="section-card">
-      <details>
+      <details open>
         <summary>
           <span class="summary-title">Identity</span>
           <span class="summary-chevron">▾</span>
@@ -462,7 +415,7 @@
 
     <!-- FUTURE -->
     <article id="future" class="section-card">
-      <details>
+      <details open>
         <summary>
           <span class="summary-title">Future</span>
           <span class="summary-chevron">▾</span>
@@ -488,7 +441,7 @@
 
     <!-- EXAMPLES -->
     <article id="examples" class="section-card">
-      <details>
+      <details open>
         <summary>
           <span class="summary-title">Examples</span>
           <span class="summary-chevron">▾</span>
@@ -502,7 +455,7 @@
 
     <!-- APPLICATIONS -->
     <article id="applications" class="section-card">
-      <details>
+      <details open>
         <summary>
           <span class="summary-title">Applications of sideloading</span>
           <span class="summary-chevron">▾</span>
@@ -526,7 +479,7 @@
 
     <!-- DICTIONARY -->
     <article id="dictionary" class="section-card">
-      <details>
+      <details open>
         <summary>
           <span class="summary-title">Dictionary</span>
           <span class="summary-chevron">▾</span>
@@ -545,7 +498,7 @@
 
     <!-- TESTING -->
     <article id="testing" class="section-card">
-      <details>
+      <details open>
         <summary>
           <span class="summary-title">Testing the sideload</span>
           <span class="summary-chevron">▾</span>
@@ -564,7 +517,7 @@
 
     <!-- STARTING KIT -->
     <article id="starting-kit" class="section-card">
-      <details>
+      <details open>
         <summary>
           <span class="summary-title">Starting kit</span>
           <span class="summary-chevron">▾</span>
@@ -599,7 +552,7 @@
 
     <!-- BEST AI -->
     <article id="best-ai" class="section-card">
-      <details>
+      <details open>
         <summary>
           <span class="summary-title">Best current AI for sideloading</span>
           <span class="summary-chevron">▾</span>
@@ -616,7 +569,7 @@
 
     <!-- WHY OPEN SOURCE -->
     <article id="why-open" class="section-card">
-      <details>
+      <details open>
         <summary>
           <span class="summary-title">Why we aim open source</span>
           <span class="summary-chevron">▾</span>
@@ -639,7 +592,7 @@
 
     <!-- OPEN MINDS -->
     <article id="open-minds" class="section-card">
-      <details>
+      <details open>
         <summary>
           <span class="summary-title">Open-sourced minds</span>
           <span class="summary-chevron">▾</span>
@@ -661,7 +614,7 @@
 
     <!-- OPEN INSTRUMENTS -->
     <article id="open-instruments" class="section-card">
-      <details>
+      <details open>
         <summary>
           <span class="summary-title">Open-sourced instruments</span>
           <span class="summary-chevron">▾</span>
@@ -689,7 +642,7 @@
 
     <!-- DOWNLOAD OPEN MIND -->
     <article id="download-open" class="section-card">
-      <details>
+      <details open>
         <summary>
           <span class="summary-title">Download open-sourced mind</span>
           <span class="summary-chevron">▾</span>
@@ -708,7 +661,7 @@
 
     <!-- PROBLEMS WITH CLOSED SOURCE -->
     <article id="problems-closed" class="section-card">
-      <details>
+      <details open>
         <summary>
           <span class="summary-title">Problems with closed-sourced sideloads</span>
           <span class="summary-chevron">▾</span>
@@ -738,7 +691,7 @@
 
     <!-- CHAT WITH SIDELOADS -->
     <article id="chat-sideloads" class="section-card">
-      <details>
+      <details open>
         <summary>
           <span class="summary-title">Chat with sideloads</span>
           <span class="summary-chevron">▾</span>
@@ -761,7 +714,7 @@
 
     <!-- REPOSITORY OF OPEN SIDELOADS -->
     <article id="repo-open" class="section-card">
-      <details>
+      <details open>
         <summary>
           <span class="summary-title">Repository of open sideloads</span>
           <span class="summary-chevron">▾</span>
@@ -780,7 +733,7 @@
 
     <!-- ETERNAL PRESERVATION -->
     <article id="eternal-preservation" class="section-card">
-      <details>
+      <details open>
         <summary>
           <span class="summary-title">Eternal preservation</span>
           <span class="summary-chevron">▾</span>
@@ -805,7 +758,7 @@
 
     <!-- KNOWN PROJECTS & TABLE -->
     <article id="known-projects" class="section-card">
-      <details>
+      <details open>
         <summary>
           <span class="summary-title">List of known projects</span>
           <span class="summary-chevron">▾</span>
@@ -1096,7 +1049,7 @@
 
     <!-- COMMERCIAL SERVICES -->
     <article id="commercial-services" class="section-card">
-      <details>
+      <details open>
         <summary>
           <span class="summary-title">Current commercial services & startups</span>
           <span class="summary-chevron">▾</span>
@@ -1127,7 +1080,7 @@
 
     <!-- AI PROJECTS DETAIL SECTION -->
     <article id="ai-projects" class="section-card">
-      <details>
+      <details open>
         <summary>
           <span class="summary-title">AI sideloading & digital-immortality projects (detail)</span>
           <span class="summary-chevron">▾</span>
@@ -1181,7 +1134,7 @@
 
     <!-- DISCUSS -->
     <article id="discuss" class="section-card">
-      <details>
+      <details open>
         <summary>
           <span class="summary-title">Discuss</span>
           <span class="summary-chevron">▾</span>
@@ -1209,7 +1162,7 @@
 
     <!-- LITERATURE -->
     <article id="literature" class="section-card">
-      <details>
+      <details open>
         <summary>
           <span class="summary-title">Literature</span>
           <span class="summary-chevron">▾</span>
@@ -1227,7 +1180,7 @@
 
     <!-- CONTRIBUTE -->
     <article id="contribute" class="section-card">
-      <details>
+      <details open>
         <summary>
           <span class="summary-title">Contribute</span>
           <span class="summary-chevron">▾</span>
@@ -1250,7 +1203,7 @@
 
     <!-- DONATIONS -->
     <article id="donations" class="section-card">
-      <details>
+      <details open>
         <summary>
           <span class="summary-title">Donations</span>
           <span class="summary-chevron">▾</span>
@@ -1268,7 +1221,7 @@
 
     <!-- PRIVACY -->
     <article id="privacy" class="section-card">
-      <details>
+      <details open>
         <summary>
           <span class="summary-title">Privacy, personal data & secrets</span>
           <span class="summary-chevron">▾</span>
@@ -1290,7 +1243,7 @@
 
     <!-- CONTACTS -->
     <article id="contacts" class="section-card">
-      <details>
+      <details open>
         <summary>
           <span class="summary-title">Contacts</span>
           <span class="summary-chevron">▾</span>
@@ -1307,7 +1260,7 @@
 
     <!-- DISCLAIMER -->
     <article id="disclaimer" class="section-card">
-      <details>
+      <details open>
         <summary>
           <span class="summary-title">Disclaimer</span>
           <span class="summary-chevron">▾</span>
@@ -1326,26 +1279,5 @@
   </main>
 </div>
 
-<script>
-  const expandBtn = document.getElementById('expand-all');
-  const collapseBtn = document.getElementById('collapse-all');
-  const printBtn = document.getElementById('print-page');
-
-  function allDetails() {
-    return Array.from(document.querySelectorAll('.section-card details'));
-  }
-
-  expandBtn.addEventListener('click', () => {
-    allDetails().forEach(d => d.open = true);
-  });
-
-  collapseBtn.addEventListener('click', () => {
-    allDetails().forEach(d => d.open = false);
-  });
-
-  printBtn.addEventListener('click', () => {
-    window.print();
-  });
-</script>
 </body>
 </html>
