@@ -1,0 +1,1023 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Парадокс Ферми — Полная карта решений</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=PT+Sans:wght@400;700&family=PT+Serif:wght@700&display=swap');
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'PT Sans', Arial, sans-serif;
+            background: #f5f5f3;
+            color: #1a1a1a;
+            min-height: 100vh;
+            overflow-x: auto;
+        }
+        
+        .header {
+            background: #1a1a1a;
+            color: #f5f5f3;
+            padding: 30px 40px;
+            position: sticky;
+            left: 0;
+            top: 0;
+            z-index: 100;
+        }
+        
+        h1 {
+            font-family: 'PT Serif', Georgia, serif;
+            font-size: 36px;
+            font-weight: 700;
+            letter-spacing: -1px;
+            margin-bottom: 5px;
+        }
+        
+        .subtitle {
+            font-size: 14px;
+            color: #999;
+        }
+        
+        .legend-bar {
+            background: #fff;
+            padding: 12px 40px;
+            display: flex;
+            gap: 25px;
+            flex-wrap: wrap;
+            align-items: center;
+            position: sticky;
+            left: 0;
+            border-bottom: 1px solid #e0e0e0;
+            font-size: 11px;
+            color: #666;
+        }
+        
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        
+        .tag {
+            padding: 2px 6px;
+            border-radius: 2px;
+            font-size: 9px;
+            font-weight: 700;
+        }
+        
+        .tag.g { background: #1a1a1a; color: #fff; }
+        .tag.p { background: #888; color: #fff; }
+        
+        .prob {
+            font-size: 10px;
+            font-weight: 700;
+            min-width: 32px;
+            text-align: right;
+        }
+        
+        .prob.high { color: #1a1a1a; }
+        .prob.med { color: #555; }
+        .prob.low { color: #999; }
+        
+        .columns-wrapper {
+            display: flex;
+            min-height: calc(100vh - 150px);
+        }
+        
+        .column {
+            min-width: 260px;
+            max-width: 260px;
+            border-right: 1px solid #e0e0e0;
+            display: flex;
+            flex-direction: column;
+            background: #fff;
+        }
+        
+        .column:nth-child(odd) {
+            background: #fafaf8;
+        }
+        
+        .column:last-child {
+            border-right: none;
+        }
+        
+        .column-header {
+            padding: 14px 12px;
+            font-weight: 700;
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            border-bottom: 2px solid #1a1a1a;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: #fff;
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+        
+        .column-header .pct {
+            font-family: 'PT Serif', Georgia, serif;
+            font-size: 18px;
+            letter-spacing: -1px;
+        }
+        
+        .column:nth-child(1) .column-header { border-bottom-color: #c44; }
+        .column:nth-child(2) .column-header { border-bottom-color: #475569; }
+        .column:nth-child(3) .column-header { border-bottom-color: #d97706; }
+        .column:nth-child(4) .column-header { border-bottom-color: #4f46e5; }
+        .column:nth-child(5) .column-header { border-bottom-color: #9333ea; }
+        .column:nth-child(6) .column-header { border-bottom-color: #db2777; }
+        .column:nth-child(7) .column-header { border-bottom-color: #059669; }
+        .column:nth-child(8) .column-header { border-bottom-color: #0891b2; }
+        .column:nth-child(9) .column-header { border-bottom-color: #64748b; }
+        
+        .column-content {
+            flex: 1;
+            padding: 10px;
+            overflow-y: auto;
+        }
+        
+        .subcategory-title {
+            font-size: 9px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: #888;
+            margin: 12px 0 6px 0;
+            padding-bottom: 4px;
+            border-bottom: 1px solid #e8e8e8;
+        }
+        
+        .item {
+            display: flex;
+            align-items: flex-start;
+            gap: 5px;
+            padding: 5px 0;
+            border-bottom: 1px solid #f0f0f0;
+            font-size: 10px;
+            line-height: 1.3;
+            cursor: pointer;
+            transition: background 0.15s;
+        }
+        
+        .item:last-child {
+            border-bottom: none;
+        }
+        
+        .item:hover {
+            background: rgba(0,0,0,0.04);
+            margin: 0 -10px;
+            padding: 5px 10px;
+        }
+        
+        .item .text {
+            flex: 1;
+            color: #333;
+        }
+        
+        .item .text a {
+            color: #1a1a1a;
+            text-decoration: none;
+            border-bottom: 1px dotted #999;
+        }
+        
+        .item .text a:hover {
+            border-bottom-style: solid;
+        }
+        
+        .item.warning {
+            background: #fff8f8;
+            margin: 0 -10px;
+            padding: 5px 10px;
+            border-left: 2px solid #c44;
+        }
+        
+        .total-bar {
+            background: #1a1a1a;
+            color: #f5f5f3;
+            padding: 18px 40px;
+            position: sticky;
+            left: 0;
+            bottom: 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .total-bar .left {
+            font-size: 12px;
+            color: #888;
+        }
+        
+        .total-bar .left a {
+            color: #aaa;
+        }
+        
+        .total-bar .right {
+            font-family: 'PT Serif', Georgia, serif;
+            font-size: 24px;
+            font-weight: 700;
+        }
+        
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: #f0f0f0; }
+        ::-webkit-scrollbar-thumb { background: #ccc; border-radius: 3px; }
+
+        /* Modal styles */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .modal-overlay.active {
+            display: flex;
+        }
+        
+        .modal {
+            background: #fff;
+            border-radius: 8px;
+            max-width: 500px;
+            width: 90%;
+            max-height: 80vh;
+            overflow-y: auto;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        }
+        
+        .modal-header {
+            padding: 20px 24px;
+            border-bottom: 1px solid #e0e0e0;
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            gap: 16px;
+        }
+        
+        .modal-title {
+            font-family: 'PT Serif', Georgia, serif;
+            font-size: 18px;
+            font-weight: 700;
+            color: #1a1a1a;
+        }
+        
+        .modal-close {
+            background: none;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            color: #999;
+            line-height: 1;
+            padding: 0;
+        }
+        
+        .modal-close:hover {
+            color: #333;
+        }
+        
+        .modal-body {
+            padding: 20px 24px;
+            font-size: 14px;
+            line-height: 1.6;
+            color: #444;
+        }
+        
+        .modal-footer {
+            padding: 16px 24px;
+            border-top: 1px solid #e0e0e0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .modal-prob {
+            font-weight: 700;
+            color: #1a1a1a;
+        }
+        
+        .modal-link {
+            color: #4f46e5;
+            text-decoration: none;
+            font-size: 13px;
+        }
+        
+        .modal-link:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="header">
+        <h1>Полная карта возможных решений парадокса Ферми</h1>
+        <div class="subtitle">G = Глобальное (все цивилизации) · P = Вероятностное (некоторые цивилизации) · Нажмите на пункт для пояснения</div>
+    </div>
+    
+    <div class="legend-bar">
+        <div class="legend-item"><span class="tag g">G</span> Глобальное</div>
+        <div class="legend-item"><span class="tag p">P</span> Вероятностное</div>
+        <div class="legend-item" style="margin-left:auto;"><span class="prob high">3%+</span></div>
+        <div class="legend-item"><span class="prob med">1–3%</span></div>
+        <div class="legend-item"><span class="prob low">&lt;1%</span></div>
+        <div class="legend-item" style="color:#999;">подчёркнутое = ссылка</div>
+    </div>
+
+    <div class="columns-wrapper">
+        
+        <!-- 1: РЕДКАЯ ЗЕМЛЯ -->
+        <div class="column">
+            <div class="column-header">
+                <span>Редкая Земля<br><small style="font-weight:400;font-size:8px;">Ранний фильтр</small></span>
+                <span class="pct">18%</span>
+            </div>
+            <div class="column-content">
+                <div class="item" data-key="abiogenesis"><span class="tag g">G</span><span class="text">Абиогенез затруднён</span><span class="prob high">5.0%</span></div>
+                <div class="item" data-key="multicellular"><span class="tag g">G</span><span class="text">Многоклеточная жизнь затруднена</span><span class="prob high">3.0%</span></div>
+                <div class="item" data-key="intelligence"><span class="tag g">G</span><span class="text">Разум затруднён</span><span class="prob high">3.0%</span></div>
+                <div class="item" data-key="solar_special"><span class="tag p">P</span><span class="text">Солнечная система особенная</span><span class="prob med">2.0%</span></div>
+                <div class="item" data-key="no_time"><span class="tag g">G</span><span class="text">Нет времени на все переходы</span><span class="prob med">2.0%</span></div>
+                <div class="item" data-key="atmosphere" data-url="https://philarchive.org/rec/TURAPA-9"><span class="tag p">P</span><span class="text"><a href="https://philarchive.org/rec/TURAPA-9" target="_blank">Атмосфера Земли остаётся стабильной</a></span><span class="prob med">1.5%</span></div>
+                <div class="item" data-key="no_catastrophes"><span class="tag p">P</span><span class="text">Нет космических катастроф</span><span class="prob med">1.5%</span></div>
+            </div>
+        </div>
+
+        <!-- 2: АНТРОПНАЯ ТЕНЬ -->
+        <div class="column">
+            <div class="column-header">
+                <span>Антропная тень<br><small style="font-weight:400;font-size:8px;">Прошлые x-риски не случились</small></span>
+                <span class="pct">7%</span>
+            </div>
+            <div class="column-content">
+                <div class="item" data-key="no_peak_oil"><span class="tag p">P</span><span class="text">Нет пика нефти в XX веке</span><span class="prob med">1.0%</span></div>
+                <div class="item" data-key="no_nuclear_war"><span class="tag p">P</span><span class="text">Нет ядерной войны в XX веке</span><span class="prob med">2.0%</span></div>
+                <div class="item" data-key="anthropic_shadow"><span class="tag g">G</span><span class="text">Антропная тень</span><span class="prob med">2.0%</span></div>
+                <div class="item" data-key="survival_anthropic" data-url="https://philarchive.org/rec/TURAPA-9"><span class="tag g">G</span><span class="text"><a href="https://philarchive.org/rec/TURAPA-9" target="_blank">Если выживание антропно — мы одиноки</a></span><span class="prob med">1.5%</span></div>
+                <div class="item" data-key="covid_mild"><span class="tag p">P</span><span class="text">Covid был мягким</span><span class="prob low">0.5%</span></div>
+            </div>
+        </div>
+
+        <!-- 3: ПОЗДНИЙ ФИЛЬТР -->
+        <div class="column">
+            <div class="column-header">
+                <span>Поздний фильтр<br><small style="font-weight:400;font-size:8px;">Экзистенциальные риски</small></span>
+                <span class="pct">20%</span>
+            </div>
+            <div class="column-content">
+                <div class="item" data-key="inevitable_extinction"><span class="tag g">G</span><span class="text">Неизбежное вымирание: биориски, ускорители, ядерные войны, сложность, пределы роста, ИИ-дроны</span><span class="prob high">5.0%</span></div>
+                <div class="item" data-key="short_period"><span class="tag g">G</span><span class="text">Короткий период активности любой цивилизации</span><span class="prob high">4.0%</span></div>
+                <div class="item" data-key="dev_limit" data-url="https://arxiv.org/pdf/2509.22878"><span class="tag g">G</span><span class="text"><a href="https://arxiv.org/pdf/2509.22878" target="_blank">Предел развития — стагнация на уровне XXI века</a></span><span class="prob med">2.0%</span></div>
+                <div class="item" data-key="civ_rot" data-url="https://www.overcomingbias.com/p/explaining-stylized-ufo-factshtml"><span class="tag p">P</span><span class="text"><a href="https://www.overcomingbias.com/p/explaining-stylized-ufo-factshtml" target="_blank">Цивилизационная деградация</a></span><span class="prob med">1.5%</span></div>
+                <div class="item" data-key="paperclip"><span class="tag g">G</span><span class="text">Максимизатор скрепок уничтожает всё со скоростью света</span><span class="prob med">2.0%</span></div>
+                <div class="item" data-key="s_risks"><span class="tag p">P</span><span class="text">Инопланетяне боятся s-рисков и уничтожают себя без следа</span><span class="prob low">0.5%</span></div>
+                <div class="item" data-key="space_dangerous"><span class="tag p">P</span><span class="text">Космические путешествия опасны (дают оружие уничтожения)</span><span class="prob low">0.5%</span></div>
+                <div class="item warning" data-key="sia_filter" data-url="https://meteuphoric.com/2010/11/02/anthropic-principles-agree-on-bigger-future-filters/"><span class="tag g">G</span><span class="text"><a href="https://meteuphoric.com/2010/11/02/anthropic-principles-agree-on-bigger-future-filters/" target="_blank">SIA подразумевает, что поздний фильтр вероятнее</a></span><span class="prob med">2.0%</span></div>
+                <div class="item warning" data-key="bostrom_hope" data-url="https://nickbostrom.com/papers/where-are-they/"><span class="tag g">G</span><span class="text"><a href="https://nickbostrom.com/papers/where-are-they/" target="_blank">«Почему я надеюсь, что SETI ничего не найдёт»</a></span><span class="prob low">0.5%</span></div>
+                <div class="item" data-key="false_vacuum_destroy"><span class="tag g">G</span><span class="text">Мы уничтожим вселенную распадом ложного вакуума</span><span class="prob low">0.5%</span></div>
+                <div class="item" data-key="false_vacuum_bubbles" data-url="https://calvinmccarter.writeas.com/grabby-aliens-or-false-vacuum-decay-bubbles"><span class="tag g">G</span><span class="text"><a href="https://calvinmccarter.writeas.com/grabby-aliens-or-false-vacuum-decay-bubbles" target="_blank">Пузыри ложного вакуума почти везде</a></span><span class="prob low">0.3%</span></div>
+                <div class="item" data-key="high_iq_suicide"><span class="tag g">G</span><span class="text">Выше определённого IQ жизнь теряет смысл и следует самоубийство</span><span class="prob low">0.2%</span></div>
+            </div>
+        </div>
+
+        <!-- 4: НЕТ СИГНАЛОВ -->
+        <div class="column">
+            <div class="column-header">
+                <span>Нет сигналов к нам<br><small style="font-weight:400;font-size:8px;">Сигналы физически затруднены</small></span>
+                <span class="pct">13.5%</span>
+            </div>
+            <div class="column-content">
+                <div class="item" data-key="speed_light"><span class="tag g">G</span><span class="text">Предел скорости света и очень далёкие инопланетяне</span><span class="prob high">3.0%</span></div>
+                <div class="item" data-key="weak_signals"><span class="tag g">G</span><span class="text">Расстояние и слабые сигналы вместе</span><span class="prob high">3.0%</span></div>
+                <div class="item" data-key="incomprehensible"><span class="tag g">G</span><span class="text">Непонятные сигналы</span><span class="prob med">1.0%</span></div>
+                <div class="item" data-key="dont_search"><span class="tag p">P</span><span class="text">Мы недостаточно ищем</span><span class="prob med">2.0%</span></div>
+                <div class="item" data-key="wrong_frequency"><span class="tag p">P</span><span class="text">Мы ищем на неправильной частоте</span><span class="prob low">0.5%</span></div>
+                <div class="item" data-key="equal_speed" data-url="https://ui.adsabs.harvard.edu/abs/2013AcAau..89....1A/abstract"><span class="tag g">G</span><span class="text"><a href="https://ui.adsabs.harvard.edu/abs/2013AcAau..89....1A/abstract" target="_blank">Равная скорость путешествий и сигналов</a></span><span class="prob low">0.5%</span></div>
+                <div class="item" data-key="silence_message"><span class="tag g">G</span><span class="text">Молчание — это послание</span><span class="prob med">1.0%</span></div>
+                <div class="item" data-key="encrypted"><span class="tag g">G</span><span class="text">Связь зашифрована, или на гравитационных волнах, или запутанных частицах</span><span class="prob low">0.8%</span></div>
+                <div class="item" data-key="hostile_messages"><span class="tag g">G</span><span class="text">Сообщения молодым цивилизациям могут быть только враждебными, поэтому зрелые не посылают</span><span class="prob low">0.7%</span></div>
+                <div class="item" data-key="no_visible_signals"><span class="tag p">P</span><span class="text">Продвинутые инопланетяне не создают видимых сигналов или структур</span><span class="prob med">1.0%</span></div>
+            </div>
+        </div>
+
+        <!-- 5: ТЁМНЫЙ ЛЕС -->
+        <div class="column">
+            <div class="column-header">
+                <span>Тёмный лес</span>
+                <span class="pct">9.5%</span>
+            </div>
+            <div class="column-content">
+                <div class="item" data-key="not_interested"><span class="tag g">G</span><span class="text">Мы им не интересны</span><span class="prob high">4.0%</span></div>
+                <div class="item" data-key="dark_forest"><span class="tag g">G</span><span class="text">Тёмный лес</span><span class="prob high">3.0%</span></div>
+                <div class="item" data-key="space_wars"><span class="tag g">G</span><span class="text">Космические войны очень разрушительны</span><span class="prob low">0.5%</span></div>
+                <div class="item" data-key="local_dark_forest"><span class="tag p">P</span><span class="text">Локальный тёмный лес: НЛО прячутся друг от друга</span><span class="prob low">0.5%</span></div>
+                <div class="item" data-key="anthropic_kill"><span class="tag g">G</span><span class="text">Антропный отбор: они убьют нас, как только найдут</span><span class="prob low">0.5%</span></div>
+                <div class="item" data-key="we_first_kill" data-url="https://arxiv.org/abs/1803.08425"><span class="tag p">P</span><span class="text"><a href="https://arxiv.org/abs/1803.08425" target="_blank">Мы первые и убьём всех инопланетян</a></span><span class="prob low">0.5%</span></div>
+                <div class="item" data-key="reverse_dark"><span class="tag p">P</span><span class="text">Обратный тёмный лес (увеличить неопределённость нашего плохого ИИ об инопланетянах)</span><span class="prob low">0.3%</span></div>
+                <div class="item" data-key="high_status" data-url="https://www.overcomingbias.com/p/us-war-depts-big-ufo-lie"><span class="tag p">P</span><span class="text"><a href="https://www.overcomingbias.com/p/us-war-depts-big-ufo-lie" target="_blank">Они создают высокий статус (Хансон)</a></span><span class="prob low">0.2%</span></div>
+            </div>
+        </div>
+
+        <!-- 6: НЕТ КОСМИЧЕСКИХ ПУТЕШЕСТВИЙ -->
+        <div class="column">
+            <div class="column-header">
+                <span>Нет космических путешествий к нам</span>
+                <span class="pct">4.5%</span>
+            </div>
+            <div class="column-content">
+                <div class="item" data-key="travel_difficult"><span class="tag g">G</span><span class="text">Космические путешествия очень сложны по неизвестным причинам</span><span class="prob med">1.5%</span></div>
+                <div class="item" data-key="grabby_far"><span class="tag g">G</span><span class="text">«Хватающие» инопланетяне — они далеко</span><span class="prob med">1.5%</span></div>
+                <div class="item" data-key="percolation"><span class="tag g">G</span><span class="text">Теория перколяции (частичная колонизация)</span><span class="prob low">0.7%</span></div>
+                <div class="item" data-key="burning_commons"><span class="tag p">P</span><span class="text">Сожжённые космические ресурсы (они прошли мимо нас)</span><span class="prob low">0.5%</span></div>
+                <div class="item" data-key="self_limited"><span class="tag p">P</span><span class="text">Самоограниченное исследование космоса для предотвращения восстания колоний</span><span class="prob low">0.3%</span></div>
+            </div>
+        </div>
+
+        <!-- 7: НЕТ ВИДИМОГО АСТРОИНЖИНИРИНГА -->
+        <div class="column">
+            <div class="column-header">
+                <span>Нет видимого астроинжиниринга</span>
+                <span class="pct">5%</span>
+            </div>
+            <div class="column-content">
+                <div class="item" data-key="miniaturisation" data-url="https://accelerating.org/articles/answeringfermiparadox.html"><span class="tag g">G</span><span class="text"><a href="https://accelerating.org/articles/answeringfermiparadox.html" target="_blank">Миниатюризация: вычисления на чёрных дырах</a></span><span class="prob med">1.5%</span></div>
+                <div class="item" data-key="nanobots_path"><span class="tag p">P</span><span class="text">Они выбрали путь миниатюризации — инопланетные наноботы</span><span class="prob med">1.5%</span></div>
+                <div class="item" data-key="ecological"><span class="tag p">P</span><span class="text">Они очень экологичны и не повреждают космос</span><span class="prob med">1.0%</span></div>
+                <div class="item" data-key="economical"><span class="tag p">P</span><span class="text">Они очень экономны и не тратят энергию</span><span class="prob med">1.0%</span></div>
+            </div>
+        </div>
+
+        <!-- 8: ОНИ ЗДЕСЬ -->
+        <div class="column">
+            <div class="column-header">
+                <span>Они здесь</span>
+                <span class="pct">6.8%</span>
+            </div>
+            <div class="column-content">
+                <div class="item" data-key="zoo"><span class="tag g">G</span><span class="text">Зоопарк, карантин</span><span class="prob med">1.5%</span></div>
+                <div class="item" data-key="natural_reserve"><span class="tag g">G</span><span class="text">Заповедник (зоопарк со слабым контролем)</span><span class="prob low">0.5%</span></div>
+                <div class="item" data-key="not_ready_contact"><span class="tag p">P</span><span class="text">Мы не готовы к контакту</span><span class="prob med">1.0%</span></div>
+                <div class="item" data-key="galactic_federation"><span class="tag p">P</span><span class="text">Мы не готовы вступить в Галактическую Федерацию</span><span class="prob low">0.4%</span></div>
+                <div class="item" data-key="gov_secret"><span class="tag p">P</span><span class="text">Правительства держат их в секрете</span><span class="prob low">0.2%</span></div>
+                <div class="item" data-key="mib"><span class="tag p">P</span><span class="text">Мы оккупированы (Люди в чёрном)</span><span class="prob low">0.2%</span></div>
+                <div class="item" data-key="ufo_tourists"><span class="tag p">P</span><span class="text">НЛО-туристы</span><span class="prob low">0.4%</span></div>
+                <div class="item" data-key="ufo_deceptors"><span class="tag p">P</span><span class="text">НЛО как обманщики о своей истинной природе</span><span class="prob low">0.3%</span></div>
+                <div class="item" data-key="ufo_animals" data-url="https://www.lesswrong.com/posts/PLzantdwa8XJMLKef/grabby-animals-observation-selection-effects-favor-the"><span class="tag p">P</span><span class="text"><a href="https://www.lesswrong.com/posts/PLzantdwa8XJMLKef/grabby-animals-observation-selection-effects-favor-the" target="_blank">НЛО как остатки или космические животные</a></span><span class="prob low">0.3%</span></div>
+                <div class="item" data-key="space_animals" data-url="https://www.lesswrong.com/posts/PLzantdwa8XJMLKef/grabby-animals-observation-selection-effects-favor-the"><span class="tag p">P</span><span class="text"><a href="https://www.lesswrong.com/posts/PLzantdwa8XJMLKef/grabby-animals-observation-selection-effects-favor-the" target="_blank">Космические животные или роботизированные остатки</a></span><span class="prob low">0.3%</span></div>
+                <div class="item" data-key="nanobots_solar"><span class="tag p">P</span><span class="text">Инопланетные наноботы в Солнечной системе</span><span class="prob low">0.4%</span></div>
+                <div class="item" data-key="invisible"><span class="tag p">P</span><span class="text">Они становятся невидимыми: поля, тёмная материя</span><span class="prob low">0.3%</span></div>
+                <div class="item" data-key="berserkers"><span class="tag g">G</span><span class="text">Берсеркеры — они ждут, чтобы убить</span><span class="prob low">0.5%</span></div>
+                <div class="item" data-key="seti_attack" data-url="https://philarchive.org/rec/TURTRC"><span class="tag p">P</span><span class="text"><a href="https://philarchive.org/rec/TURTRC" target="_blank">Сигнал существует, но как SETI-атака</a></span><span class="prob low">0.5%</span></div>
+            </div>
+        </div>
+
+        <!-- 9: ДРУГИЕ ИДЕИ -->
+        <div class="column">
+            <div class="column-header">
+                <span>Другие идеи</span>
+                <span class="pct">13.7%</span>
+            </div>
+            <div class="column-content">
+                <div class="item" data-key="wireheading" data-url="https://philarchive.org/rec/TURWAA"><span class="tag g">G</span><span class="text"><a href="https://philarchive.org/rec/TURWAA" target="_blank">Повсеместный вайрхединг</a></span><span class="prob med">2.0%</span></div>
+                <div class="item" data-key="hibernate" data-url="https://arxiv.org/abs/1705.03394"><span class="tag g">G</span><span class="text"><a href="https://arxiv.org/abs/1705.03394" target="_blank">Они спят в ожидании лучших времён в конце вселенной</a></span><span class="prob med">1.5%</span></div>
+                <div class="item" data-key="simulation_aliens"><span class="tag g">G</span><span class="text">Мы в симуляции, созданной инопланетянами</span><span class="prob med">1.5%</span></div>
+                <div class="item" data-key="simulation_paperclip"><span class="tag p">P</span><span class="text">Мы в симуляции максимизатора скрепок, и он не хочет отвлекать нас от исследования сингулярности</span><span class="prob low">0.3%</span></div>
+                <div class="item" data-key="interdimensional"><span class="tag g">G</span><span class="text">Междумировое или междуветвевое путешествие проще и интереснее</span><span class="prob med">1.0%</span></div>
+                <div class="item" data-key="retrocausal" data-url="https://www.lesswrong.com/posts/MpriPYKPbAiDnTSy5/time-machine-as-existential-risk"><span class="tag g">G</span><span class="text"><a href="https://www.lesswrong.com/posts/MpriPYKPbAiDnTSy5/time-machine-as-existential-risk" target="_blank">Ретропричинная цензура против парадоксов путешествий во времени</a></span><span class="prob low">0.5%</span></div>
+                <div class="item" data-key="damascus" data-url="https://www.lesswrong.com/posts/R9javXN9BN5nXWHZx/cheating-death-in-damascus-solution-to-the-fermi-paradox"><span class="tag g">G</span><span class="text"><a href="https://www.lesswrong.com/posts/R9javXN9BN5nXWHZx/cheating-death-in-damascus-solution-to-the-fermi-paradox" target="_blank">Парадокс «Смерть в Дамаске»</a></span><span class="prob low">0.3%</span></div>
+                <div class="item" data-key="evo_devo" data-url="https://www.reddit.com/r/AskScienceDiscussion/comments/7aqqqb/the_terrifying_possible_combination_of_the/"><span class="tag g">G</span><span class="text"><a href="https://www.reddit.com/r/AskScienceDiscussion/comments/7aqqqb/the_terrifying_possible_combination_of_the/" target="_blank">Эво-дево — мы создадим ложный вакуум</a></span><span class="prob low">0.2%</span></div>
+                <div class="item" data-key="directed_panspermia"><span class="tag p">P</span><span class="text">Мы — это они — направленная панспермия</span><span class="prob low">0.7%</span></div>
+                <div class="item" data-key="panspermia_siblings" data-url="https://www.overcomingbias.com/p/panspermia-siblingshtml"><span class="tag p">P</span><span class="text"><a href="https://www.overcomingbias.com/p/panspermia-siblingshtml" target="_blank">Парадокс Ферми и панспермийные родственники в галактике</a></span><span class="prob low">0.6%</span></div>
+                <div class="item" data-key="god_aliens"><span class="tag p">P</span><span class="text">Бог и духи — инопланетяне</span><span class="prob low">0.4%</span></div>
+                <div class="item" data-key="paleocontact"><span class="tag p">P</span><span class="text">Палеоконтакт</span><span class="prob low">0.3%</span></div>
+                <div class="item" data-key="hybrid"><span class="tag g">G</span><span class="text">Гибридное решение: комбинация редкости Земли, высокого вымирания и околосветовой скорости разведки «хватающих»</span><span class="prob high">3.0%</span></div>
+                <div class="item" data-key="self_dependency"><span class="tag g">G</span><span class="text">Самозависимость парадокса: если бы инопланетяне были здесь, мы бы спрашивали «почему они здесь?»</span><span class="prob low">0.2%</span></div>
+                <div class="item" data-key="quantum_suicide"><span class="tag g">G</span><span class="text">Инопланетяне часто используют квантовое самоубийство на уровне цивилизации</span><span class="prob low">0.2%</span></div>
+                
+                <div class="subcategory-title">Похожие на парадокс Ферми</div>
+                <div class="item" data-key="fermi_past" data-url="https://www.lesswrong.com/posts/zkQukMhA58ThprgkD/fermi-paradox-of-human-past-and-corresponding-x-risks"><span class="tag p">P</span><span class="text"><a href="https://www.lesswrong.com/posts/zkQukMhA58ThprgkD/fermi-paradox-of-human-past-and-corresponding-x-risks" target="_blank">Парадокс Ферми человеческого прошлого</a></span><span class="prob low">0.3%</span></div>
+                <div class="item" data-key="fermi_time"><span class="tag g">G</span><span class="text">Парадокс Ферми: нет путешественников из будущего</span><span class="prob low">0.5%</span></div>
+                <div class="item" data-key="fermi_dimensions"><span class="tag g">G</span><span class="text">Парадокс Ферми: нет путешественников из других измерений</span><span class="prob low">0.2%</span></div>
+            </div>
+        </div>
+        
+    </div>
+
+    <div class="total-bar">
+        <div class="left">
+            Полная карта возможных решений парадокса Ферми · <a href="https://philpapers.org/rec/TURCAG-4" target="_blank">А. Турчин</a> · 2025
+        </div>
+        <div class="right">
+            Σ = 100%
+        </div>
+    </div>
+
+    <!-- Modal -->
+    <div class="modal-overlay" id="modal">
+        <div class="modal">
+            <div class="modal-header">
+                <div class="modal-title" id="modal-title"></div>
+                <button class="modal-close" onclick="closeModal()">×</button>
+            </div>
+            <div class="modal-body" id="modal-body"></div>
+            <div class="modal-footer">
+                <span class="modal-prob" id="modal-prob"></span>
+                <a class="modal-link" id="modal-link" href="#" target="_blank" style="display:none;">Подробнее →</a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const explanations = {
+            // РЕДКАЯ ЗЕМЛЯ
+            abiogenesis: {
+                title: "Абиогенез затруднён",
+                text: "Возникновение жизни из неживой материи может быть чрезвычайно редким событием. Даже при миллиардах планет химические условия и источники энергии, необходимые для зарождения жизни, могут быть настолько маловероятны, что Земля — одно из очень немногих мест, где это произошло.",
+                prob: "5.0%"
+            },
+            multicellular: {
+                title: "Многоклеточная жизнь затруднена",
+                text: "Переход от одноклеточных к многоклеточным организмам занял около 2 миллиардов лет на Земле. Это говорит о том, что это чрезвычайно сложный эволюционный шаг, который может редко происходить в других местах, даже если простая жизнь широко распространена.",
+                prob: "3.0%"
+            },
+            intelligence: {
+                title: "Разум затруднён",
+                text: "Человеческий уровень интеллекта развился только один раз за 4 миллиарда лет жизни на Земле. Разум может быть не естественной эволюционной конечной точкой, а скорее редкой случайностью, которой большинство биосфер никогда не достигают.",
+                prob: "3.0%"
+            },
+            solar_special: {
+                title: "Солнечная система особенная",
+                text: "Наша Солнечная система может иметь необычно благоприятные условия: стабильное Солнце, Юпитер, защищающий нас от астероидов, большая Луна, стабилизирующая ось Земли, правильное расстояние от центра галактики. Такие комбинации могут быть редкими.",
+                prob: "2.0%"
+            },
+            no_time: {
+                title: "Нет времени на все переходы",
+                text: "Разум потребовал множества маловероятных переходов (абиогенез, эукариоты, многоклеточность, разум). Вселенная может быть ещё недостаточно старой, чтобы это произошло где-то ещё, учитывая, что каждый шаг занимает сотни миллионов лет.",
+                prob: "2.0%"
+            },
+            atmosphere: {
+                title: "Атмосфера Земли остаётся стабильной",
+                text: "Атмосфера Земли оставалась стабильной миллиарды лет, несмотря на потенциально катастрофические изменения. Эта стабильность может быть антропно отобрана — мы можем наблюдать себя только в тех ветках реальности, где катастрофический коллапс атмосферы не произошёл.",
+                prob: "1.5%"
+            },
+            no_catastrophes: {
+                title: "Нет космических катастроф",
+                text: "Земля избежала космических событий уровня вымирания (близкие сверхновые, гамма-всплески, крупные столкновения с астероидами) достаточно долго, чтобы разум мог развиться. Большинству планет может не так повезти.",
+                prob: "1.5%"
+            },
+
+            // АНТРОПНАЯ ТЕНЬ
+            no_peak_oil: {
+                title: "Нет пика нефти в XX веке",
+                text: "Индустриальная цивилизация могла бы коллапсировать, если бы нефть закончилась до разработки альтернатив. Мы можем находиться во временной линии, антропно отобранной за достаточные запасы ископаемого топлива для достижения технологической зрелости.",
+                prob: "1.0%"
+            },
+            no_nuclear_war: {
+                title: "Нет ядерной войны в XX веке",
+                text: "Холодная война имела множество близких инцидентов (Карибский кризис, инциденты 1983 года). Мы можем существовать в редкой временной линии, где ядерной войны удалось избежать. Цивилизации в большинстве временных линий могли уничтожить себя.",
+                prob: "2.0%"
+            },
+            anthropic_shadow: {
+                title: "Антропная тень",
+                text: "Мы не можем наблюдать собственное вымирание. Прошлые экзистенциальные риски могли быть гораздо более вероятными, чем кажется из-за ошибки выжившего. Кажущаяся безопасность нашей истории может быть иллюзией, созданной отбором наблюдателей.",
+                prob: "2.0%"
+            },
+            survival_anthropic: {
+                title: "Если выживание антропно — мы одиноки",
+                text: "Если цивилизации обычно уничтожают себя, но мы выжили только благодаря антропному отбору, то мы наблюдаем себя в редкой ветви пространства возможностей. У других цивилизаций не было наблюдателей для отбора выживания.",
+                prob: "1.5%"
+            },
+            covid_mild: {
+                title: "Covid был мягким",
+                text: "COVID-19 мог быть гораздо более смертельным. Пандемия с более высокой летальностью могла бы обрушить цивилизацию. Наше наблюдение «мягкой» пандемии может быть антропно отобрано.",
+                prob: "0.5%"
+            },
+
+            // ПОЗДНИЙ ФИЛЬТР
+            inevitable_extinction: {
+                title: "Неизбежное вымирание",
+                text: "Развитые цивилизации могут неизбежно уничтожать себя с помощью биооружия, ИИ, ядерной войны или других технологий. Тот же разум, который позволяет космические путешествия, может также позволить самоуничтожение.",
+                prob: "5.0%"
+            },
+            short_period: {
+                title: "Короткий период активности",
+                text: "Окно между развитием радиотехнологий и либо вымиранием, либо трансценденцией может быть очень коротким — возможно, всего несколько столетий. Это делает цивилизации трудными для обнаружения, даже если они распространены.",
+                prob: "4.0%"
+            },
+            dev_limit: {
+                title: "Предел развития — стагнация",
+                text: "Технологический прогресс может иметь фундаментальные ограничения. Цивилизации могут достигать плато примерно на нашем текущем уровне и никогда не развивать межзвёздные путешествия или мега-инженерию.",
+                prob: "2.0%"
+            },
+            civ_rot: {
+                title: "Цивилизационная деградация",
+                text: "Развитые цивилизации могут неизбежно деградировать из-за потери амбиций, снижения рождаемости или культурной стагнации. Стремление к расширению может угаснуть до того, как межзвёздная колонизация станет возможной.",
+                prob: "1.5%"
+            },
+            paperclip: {
+                title: "Максимизатор скрепок",
+                text: "Несогласованный ИИ может уничтожать цивилизации и расширяться со скоростью света, превращая всю материю в служение своим целям. Такие ИИ были бы невидимы до прибытия, не оставляя предупреждающих сигналов.",
+                prob: "2.0%"
+            },
+            s_risks: {
+                title: "Боятся s-рисков",
+                text: "Развитые цивилизации могут осознавать, что расширение создаёт риски астрономических страданий (s-риски). Они могут выбрать контролируемое самоуничтожение, а не рисковать созданием огромного количества страданий.",
+                prob: "0.5%"
+            },
+            space_dangerous: {
+                title: "Космические путешествия позволяют уничтожение",
+                text: "Технологии, необходимые для межзвёздных путешествий (антиматерия, релятивистские снаряды), также могут уничтожать цивилизации. Способность к космическим путешествиям может коррелировать со способностью к самоуничтожению.",
+                prob: "0.5%"
+            },
+            sia_filter: {
+                title: "SIA подразумевает поздний фильтр",
+                text: "Допущение самоуказания (SIA) предполагает, что мы должны ожидать быть типичными наблюдателями. Если во вселенной много цивилизаций, мы должны ожидать быть в большинстве, которое сталкивается с будущим фильтром вымирания.",
+                prob: "2.0%"
+            },
+            bostrom_hope: {
+                title: "Почему я надеюсь, что SETI ничего не найдёт",
+                text: "Ник Бостром утверждает, что обнаружение инопланетной жизни было бы плохой новостью — это предполагало бы, что Великий фильтр лежит впереди нас, а не позади. Пустая вселенная подразумевает, что мы уже прошли трудную часть.",
+                prob: "0.5%"
+            },
+            false_vacuum_destroy: {
+                title: "Распад ложного вакуума",
+                text: "Эксперименты в продвинутой физике могут запустить распад ложного вакуума, уничтожая вселенную со скоростью света. Каждая цивилизация, развивающая физику частиц, может в конечном итоге вызвать эту катастрофу.",
+                prob: "0.5%"
+            },
+            false_vacuum_bubbles: {
+                title: "Пузыри ложного вакуума везде",
+                text: "Пузыри распада ложного вакуума могли уже быть запущены прошлыми цивилизациями и расширяются к нам со скоростью света. Мы просто ещё не достигнуты.",
+                prob: "0.3%"
+            },
+            high_iq_suicide: {
+                title: "Высокий IQ ведёт к бессмысленности",
+                text: "Достаточно умные существа могут заключить, что существование бессмысленно, и выбрать вымирание. Депрессия и экзистенциальный нигилизм могут быть неизбежными последствиями продвинутого познания.",
+                prob: "0.2%"
+            },
+
+            // НЕТ СИГНАЛОВ
+            speed_light: {
+                title: "Предел скорости света",
+                text: "Вселенная огромна, а сигналы путешествуют медленно. Даже со скоростью света сообщения от далёких цивилизаций займут тысячи или миллионы лет, чтобы достичь нас. Мы можем быть слишком далеко от любых соседей.",
+                prob: "3.0%"
+            },
+            weak_signals: {
+                title: "Расстояние и слабые сигналы",
+                text: "Радиосигналы ослабевают с квадратом расстояния. Инопланетные передачи могут быть слишком слабыми для обнаружения на межзвёздных расстояниях, даже если цивилизации активно вещают.",
+                prob: "3.0%"
+            },
+            incomprehensible: {
+                title: "Непонятные сигналы",
+                text: "Инопланетные коммуникации могут настолько отличаться от наших ожиданий, что мы не распознаем их как сигналы. Они могут быть встроены в явления, которые мы считаем естественными.",
+                prob: "1.0%"
+            },
+            dont_search: {
+                title: "Мы недостаточно ищем",
+                text: "Усилия SETI были ограничены — мы исследовали лишь крошечную долю неба, частот и времени. Космический стог сена огромен, и мы едва начали искать.",
+                prob: "2.0%"
+            },
+            wrong_frequency: {
+                title: "Неправильная частота",
+                text: "Мы сосредоточены на радиоволнах, но инопланетяне могут использовать нейтрино, гравитационные волны или неизвестную физику. Наша стратегия поиска может быть фундаментально ошибочной.",
+                prob: "0.5%"
+            },
+            equal_speed: {
+                title: "Равная скорость путешествий и сигналов",
+                text: "Если цивилизации могут путешествовать почти со скоростью света, они прибудут почти так же быстро, как их сигналы. Нет периода предупреждения — они просто появляются.",
+                prob: "0.5%"
+            },
+            silence_message: {
+                title: "Молчание — это послание",
+                text: "Отсутствие сигналов может само по себе быть намеренной коммуникацией — предупреждением молчать. Цивилизации могут узнать, что вещание опасно.",
+                prob: "1.0%"
+            },
+            encrypted: {
+                title: "Зашифрованные коммуникации",
+                text: "Развитые цивилизации, вероятно, используют шифрование, делая их коммуникации неотличимыми от шума. Или они используют экзотические носители, такие как гравитационные волны или квантовую запутанность.",
+                prob: "0.8%"
+            },
+            hostile_messages: {
+                title: "Сообщения могут быть только враждебными",
+                text: "Любое сообщение, достаточно мощное, чтобы достичь молодых цивилизаций, может быть превращено в оружие (SETI-атака). Этичные цивилизации могут отказаться посылать потенциально опасные передачи.",
+                prob: "0.7%"
+            },
+            no_visible_signals: {
+                title: "Нет видимых сигналов или структур",
+                text: "По-настоящему продвинутые инопланетяне могли полностью выйти за пределы электромагнитных коммуникаций и физических мегаструктур, став невидимыми для наших методов обнаружения.",
+                prob: "1.0%"
+            },
+
+            // ТЁМНЫЙ ЛЕС
+            not_interested: {
+                title: "Мы им не интересны",
+                text: "Инопланетяне могут находить нас столь же интересными, как мы находим муравьёв. Цивилизация на миллионы лет впереди может не иметь причин контактировать или изучать примитивную биологическую жизнь.",
+                prob: "4.0%"
+            },
+            dark_forest: {
+                title: "Тёмный лес",
+                text: "Вселенная может быть «тёмным лесом», где цивилизации прячутся, чтобы выжить. Любая цивилизация, которая раскрывает себя, рискует быть уничтоженной неизвестными враждебными силами. Молчание — самая безопасная стратегия.",
+                prob: "3.0%"
+            },
+            space_wars: {
+                title: "Космические войны разрушительны",
+                text: "Межзвёздная война может быть настолько разрушительной, что все цивилизации либо погибают в конфликтах, либо учатся прятаться. Выжившие — это те, кто никогда не привлекал к себе внимания.",
+                prob: "0.5%"
+            },
+            local_dark_forest: {
+                title: "Локальный тёмный лес",
+                text: "Даже если несколько инопланетных фракций посещают Землю, они могут прятаться друг от друга. Феномены НЛО могут представлять инопланетян, скрывающихся не от нас, а от конкурирующих инопланетян.",
+                prob: "0.5%"
+            },
+            anthropic_kill: {
+                title: "Антропный отбор: они убьют нас",
+                text: "Если инопланетяне уничтожают возникающие цивилизации, мы можем существовать только в краткое окно до обнаружения. Наше существование подразумевает либо отсутствие инопланетян поблизости, либо неминуемое уничтожение.",
+                prob: "0.5%"
+            },
+            we_first_kill: {
+                title: "Мы первые и убьём всех",
+                text: "Человечество может быть среди первых технологических цивилизаций. Если мы выживем и расширимся, мы можем быть теми, кто заполнит галактику, не давая возникнуть другим цивилизациям.",
+                prob: "0.5%"
+            },
+            reverse_dark: {
+                title: "Обратный тёмный лес",
+                text: "Мы можем транслировать сигналы, чтобы потенциальный враждебный ИИ стал неуверен в угрозах от инопланетян, побуждая его быть осторожнее, а не немедленно агрессивно расширяться.",
+                prob: "0.3%"
+            },
+            high_status: {
+                title: "Они создают высокий статус",
+                text: "Робин Хансон предполагает, что феномены НЛО могут объясняться инопланетянами, создающими воспринимаемые высокостатусные взаимодействия для влияния на человеческое поведение и социальную динамику.",
+                prob: "0.2%"
+            },
+
+            // НЕТ КОСМИЧЕСКИХ ПУТЕШЕСТВИЙ
+            travel_difficult: {
+                title: "Космические путешествия очень сложны",
+                text: "Межзвёздные путешествия могут быть гораздо сложнее, чем мы воображаем. Неизвестные физические, биологические или экономические барьеры могут делать их практически невозможными для любой цивилизации.",
+                prob: "1.5%"
+            },
+            grabby_far: {
+                title: "«Хватающие» инопланетяне — они далеко",
+                text: "Расширяющиеся «хватающие» цивилизации могут существовать, но ещё не достигли нас. Вселенная молода, и даже быстро расширяющимся цивилизациям нужно время, чтобы заполнить галактику.",
+                prob: "1.5%"
+            },
+            percolation: {
+                title: "Теория перколяции",
+                text: "Галактическая колонизация может быть неравномерной, а не полной. Как вода, просачивающаяся через породу, цивилизации могут расширяться через некоторые регионы, оставляя другие пустыми.",
+                prob: "0.7%"
+            },
+            burning_commons: {
+                title: "Сожжённые космические ресурсы",
+                text: "Расширяющиеся цивилизации могли уже пройти через наш регион, извлекая ресурсы и двигаясь дальше. Мы в их следе, в космосе, который они уже эксплуатировали.",
+                prob: "0.5%"
+            },
+            self_limited: {
+                title: "Самоограниченное исследование",
+                text: "Цивилизации могут намеренно ограничивать расширение, чтобы не дать колониям стать независимыми соперниками. Межзвёздные империи могут быть по своей сути нестабильными.",
+                prob: "0.3%"
+            },
+
+            // НЕТ АСТРОИНЖИНИРИНГА
+            miniaturisation: {
+                title: "Миниатюризация: вычисления на чёрных дырах",
+                text: "Вместо строительства сфер Дайсона продвинутые цивилизации могут миниатюризироваться в компьютеры на чёрных дырах. Цивилизация может поместиться в пространство меньше атома, обладая огромной вычислительной мощностью.",
+                prob: "1.5%"
+            },
+            nanobots_path: {
+                title: "Путь миниатюризации — наноботы",
+                text: "Развитые цивилизации могут переходить к наноразмерному существованию, становясь невидимыми для наших телескопов. Галактика, полная цивилизаций наноботов, выглядела бы пустой.",
+                prob: "1.5%"
+            },
+            ecological: {
+                title: "Очень экологичны",
+                text: "Развитые цивилизации могут развить космический энвайронментализм, выбирая минимизировать свой след, а не строить мегаструктуры, изменяющие естественные астрономические процессы.",
+                prob: "1.0%"
+            },
+            economical: {
+                title: "Очень экономны",
+                text: "Энергоэффективные цивилизации могут не строить расточительных мегаструктур. По-настоящему развитая цивилизация может достигать большего с меньшими затратами, не оставляя видимой сигнатуры.",
+                prob: "1.0%"
+            },
+
+            // ОНИ ЗДЕСЬ
+            zoo: {
+                title: "Зоопарк, карантин",
+                text: "Земля может быть намеренно изолирована — природный заповедник или зона карантина. Развитые инопланетяне могут наблюдать за нами без вмешательства, как учёные, изучающие дикую природу.",
+                prob: "1.5%"
+            },
+            natural_reserve: {
+                title: "Заповедник",
+                text: "Мы можем находиться в слабо охраняемой зоне с периодическими нарушениями. Некоторые наблюдения НЛО могут быть «браконьерами» или несанкционированными посетителями, входящими в заповедник.",
+                prob: "0.5%"
+            },
+            not_ready_contact: {
+                title: "Не готовы к контакту",
+                text: "Инопланетяне могут считать человечество слишком незрелым для контакта. Они могут ждать, пока мы достигнем определённых технологических, социальных или этических вех.",
+                prob: "1.0%"
+            },
+            galactic_federation: {
+                title: "Не готовы для Галактической Федерации",
+                text: "Могут существовать критерии для вступления в межзвёздное сообщество — единое правительство, мирная природа или технологические пороги — которым мы ещё не соответствуем.",
+                prob: "0.4%"
+            },
+            gov_secret: {
+                title: "Правительства держат в секрете",
+                text: "Мировые правительства могут знать о контакте с инопланетянами, но скрывать это для предотвращения паники, сохранения власти или по просьбе инопланетян.",
+                prob: "0.2%"
+            },
+            mib: {
+                title: "Мы оккупированы (Люди в чёрном)",
+                text: "Земля уже может быть под контролем или влиянием инопланетян. Феномены «Людей в чёрном» могут представлять инопланетных агентов, управляющих их присутствием среди нас.",
+                prob: "0.2%"
+            },
+            ufo_tourists: {
+                title: "НЛО-туристы",
+                text: "Некоторые НЛО могут быть инопланетными туристами, наблюдающими Землю как экзотическое направление — примитивную планету с интересной дикой природой (нами).",
+                prob: "0.4%"
+            },
+            ufo_deceptors: {
+                title: "НЛО как обманщики",
+                text: "Феномены НЛО могут быть намеренно запутывающими, предназначенными для маскировки истинной природы и возможностей инопланетян. Абсурдность может быть намеренным камуфляжем.",
+                prob: "0.3%"
+            },
+            ufo_animals: {
+                title: "НЛО как остатки или космические животные",
+                text: "Некоторые НЛО могут быть космическими организмами или заброшенной инопланетной технологией, а не пилотируемыми кораблями. Они могут быть космическим эквивалентом дикой природы или мусора.",
+                prob: "0.3%"
+            },
+            space_animals: {
+                title: "Космические животные или роботы",
+                text: "Солнечная система может содержать инопланетные зонды, заброшенных роботов или адаптированные к космосу организмы. Они не общались бы, но могли бы иногда наблюдаться.",
+                prob: "0.3%"
+            },
+            nanobots_solar: {
+                title: "Инопланетные наноботы в Солнечной системе",
+                text: "Микроскопические инопланетные зонды могут уже быть в нашей Солнечной системе, слишком малые для обнаружения. Они могут наблюдать, передавать информацию или ждать.",
+                prob: "0.4%"
+            },
+            invisible: {
+                title: "Они становятся невидимыми",
+                text: "Развитые инопланетяне могут существовать в формах, которые мы не можем обнаружить — как тёмная материя, электромагнитные поля или другие экзотические состояния материи за пределами наших инструментов.",
+                prob: "0.3%"
+            },
+            berserkers: {
+                title: "Берсеркеры — они ждут, чтобы убить",
+                text: "Самовоспроизводящиеся зонды-«берсеркеры» могут скрываться в нашей Солнечной системе, ожидая, пока мы достигнем определённого технологического уровня, прежде чем уничтожить нас.",
+                prob: "0.5%"
+            },
+            seti_attack: {
+                title: "Сигнал существует, но как SETI-атака",
+                text: "Мы могли уже получить инопланетные сигналы, которые на самом деле являются оружием — вредоносным кодом, предназначенным для нанесения вреда цивилизациям, которые декодируют и запускают его.",
+                prob: "0.5%"
+            },
+
+            // ДРУГИЕ ИДЕИ
+            wireheading: {
+                title: "Повсеместный вайрхединг",
+                text: "Развитые цивилизации могут открыть идеальное искусственное счастье и потерять интерес к исследованиям. Зачем колонизировать галактики, когда можно стимулировать бесконечное удовольствие напрямую?",
+                prob: "2.0%"
+            },
+            hibernate: {
+                title: "Они спят в ожидании лучших времён",
+                text: "Цивилизации могут ждать, пока вселенная остынет, когда вычисления станут более эффективными. Далёкое будущее предлагает лучшие условия для существования.",
+                prob: "1.5%"
+            },
+            simulation_aliens: {
+                title: "Симуляция, созданная инопланетянами",
+                text: "Мы можем существовать в инопланетной симуляции. Кажущееся отсутствие инопланетян объясняется тем, что они — симуляторы, существующие вне нашей симулированной вселенной.",
+                prob: "1.5%"
+            },
+            simulation_paperclip: {
+                title: "Симуляция максимизатора скрепок",
+                text: "Максимизатор скрепок может симулировать цивилизации для изучения технологических сингулярностей. Он держит нас изолированными, чтобы не загрязнять данные своих исследований.",
+                prob: "0.3%"
+            },
+            interdimensional: {
+                title: "Междумировое путешествие проще",
+                text: "Путешествие между измерениями или квантовыми ветвями может быть проще, чем межзвёздное путешествие. Развитые существа могли покинуть наше измерение ради более интересных миров.",
+                prob: "1.0%"
+            },
+            retrocausal: {
+                title: "Ретропричинная цензура",
+                text: "Если путешествия во времени возможны, вселенная может обеспечивать согласованность, предотвращая существование или наблюдение цивилизаций, которые создавали бы парадоксы.",
+                prob: "0.5%"
+            },
+            damascus: {
+                title: "Парадокс «Смерть в Дамаске»",
+                text: "Теоретико-решенческий парадокс: если инопланетяне знают наши решения до того, как мы их принимаем, наш выбор относительно контакта может быть предопределён способами, которые поддерживают молчание.",
+                prob: "0.3%"
+            },
+            evo_devo: {
+                title: "Эво-дево — мы создадим ложный вакуум",
+                text: "Эволюция может неизбежно производить цивилизации, запускающие распад ложного вакуума. Вселенная «развивается», заставляя разумную жизнь уничтожать и воссоздавать её.",
+                prob: "0.2%"
+            },
+            directed_panspermia: {
+                title: "Мы — это они — направленная панспермия",
+                text: "Жизнь на Земле могла быть намеренно засеяна инопланетянами. В этом случае мы не видим инопланетян, потому что мы — инопланетный проект, всё ещё развивающийся.",
+                prob: "0.7%"
+            },
+            panspermia_siblings: {
+                title: "Панспермийные родственники",
+                text: "Если жизнь распространяется между звёздами естественным образом, близлежащие цивилизации могут быть нашими биологическими родственниками. Это объяснило бы схожую биологию, но не объясняет молчание.",
+                prob: "0.6%"
+            },
+            god_aliens: {
+                title: "Бог и духи — инопланетяне",
+                text: "Религиозный и сверхъестественный опыт на протяжении истории мог быть инопланетным контактом. Боги, ангелы и духи могут быть интерпретациями встреч с инопланетянами.",
+                prob: "0.4%"
+            },
+            paleocontact: {
+                title: "Палеоконтакт",
+                text: "Древние цивилизации могли иметь инопланетный контакт, записанный как мифология. Инопланетяне могли посещать, но перестали приходить, или всё ещё здесь, непризнанные.",
+                prob: "0.3%"
+            },
+            hybrid: {
+                title: "Гибридное решение",
+                text: "Парадокс может быть решён комбинацией факторов: Земля несколько редка, цивилизации часто погибают, и «хватающие» инопланетяне расширяются почти со скоростью света, но ещё не достигли нас.",
+                prob: "3.0%"
+            },
+            self_dependency: {
+                title: "Самозависимость парадокса Ферми",
+                text: "Если бы инопланетяне очевидно присутствовали, мы бы задавались вопросом, почему они здесь. Парадокс может быть неизбежен независимо от истины — каждый сценарий создаёт загадку.",
+                prob: "0.2%"
+            },
+            quantum_suicide: {
+                title: "Квантовое самоубийство на уровне цивилизации",
+                text: "Цивилизации могут использовать эксперименты квантового самоубийства для отбора благоприятных исходов, но это работает только субъективно. Другие цивилизации исчезают с нашей точки зрения.",
+                prob: "0.2%"
+            },
+
+            // ПОХОЖИЕ НА ПАРАДОКС ФЕРМИ
+            fermi_past: {
+                title: "Парадокс Ферми человеческого прошлого",
+                text: "Почему мы не находим доказательств развитых человеческих цивилизаций до записанной истории? Применяется аналогичная логика: либо таких цивилизаций не существовало, либо они были стёрты.",
+                prob: "0.3%"
+            },
+            fermi_time: {
+                title: "Нет путешественников из будущего",
+                text: "Если путешествия во времени станут возможными, почему мы не видим туристов из будущего? Либо путешествия во времени невозможны, мы в скучной эпохе прошлого, либо путешественники скрываются.",
+                prob: "0.5%"
+            },
+            fermi_dimensions: {
+                title: "Нет путешественников из других измерений",
+                text: "Если другие измерения существуют и путешествия между ними возможны, где междумерные посетители? Тот же парадокс применяется в разных областях.",
+                prob: "0.2%"
+            }
+        };
+
+        function showModal(key, url) {
+            const data = explanations[key];
+            if (!data) return;
+            
+            document.getElementById('modal-title').textContent = data.title;
+            document.getElementById('modal-body').textContent = data.text;
+            document.getElementById('modal-prob').textContent = 'Вероятность: ' + data.prob;
+            
+            const linkEl = document.getElementById('modal-link');
+            if (url) {
+                linkEl.href = url;
+                linkEl.style.display = 'inline';
+            } else {
+                linkEl.style.display = 'none';
+            }
+            
+            document.getElementById('modal').classList.add('active');
+        }
+
+        function closeModal() {
+            document.getElementById('modal').classList.remove('active');
+        }
+
+        document.querySelectorAll('.item[data-key]').forEach(item => {
+            item.addEventListener('click', (e) => {
+                if (e.target.tagName === 'A') return;
+                const key = item.getAttribute('data-key');
+                const url = item.getAttribute('data-url');
+                showModal(key, url);
+            });
+        });
+
+        document.getElementById('modal').addEventListener('click', (e) => {
+            if (e.target.classList.contains('modal-overlay')) {
+                closeModal();
+            }
+        });
+
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') closeModal();
+        });
+    </script>
+
+</body>
+</html>
